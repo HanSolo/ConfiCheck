@@ -33,45 +33,59 @@ struct ContentView: View {
             }
             .pickerStyle(.segmented)
             
-            List {
-                ForEach(self.filteredConferences.keys.sorted(), id: \.self) { month in
-                    Section(isExpanded: Binding<Bool> (
-                                get: {
-                                    return isExpanded.contains(month)
-                                },
-                                set: { isExpanding in
-                                    if isExpanding {
-                                        isExpanded.insert(month)
-                                    } else {
-                                        isExpanded.remove(month)
-                                    }
-                                }
-                            ),
-                            content: {
-                                ForEach(self.filteredConferences[month]!.sorted(by: { $0.date < $1.date })) { conference in
-                                    ConferenceView(conference: conference)
-                                }
+            if self.model.networkMonitor.isConnectedToInternet {
+                
+                List {
+                    ForEach(self.filteredConferences.keys.sorted(), id: \.self) { month in
+                        Section(isExpanded: Binding<Bool> (
+                            get: {
+                                return isExpanded.contains(month)
                             },
-                            header: {
-                                HStack {
-                                    Text("\(formatter.monthSymbols[month-1].capitalized)")
-                                    Text("\(self.filteredConferences[month]!.count > 0 ? "( \(self.filteredConferences[month]!.count) )" : "")")
-                                        .foregroundStyle(.secondary)
-                                    
+                            set: { isExpanding in
+                                if isExpanding {
+                                    isExpanded.insert(month)
+                                } else {
+                                    isExpanded.remove(month)
                                 }
                             }
-                    )
-                    .font(.system(size: 16, weight: .regular, design: .rounded))
-                    .listRowBackground(Color(.systemGray6))
-                    .accentColor(Color(.systemGray2))
+                        ),
+                                content: {
+                            ForEach(self.filteredConferences[month]!.sorted(by: { $0.date < $1.date })) { conference in
+                                ConferenceView(conference: conference)
+                            }
+                        },
+                                header: {
+                            HStack {
+                                Text("\(formatter.monthSymbols[month-1].capitalized)")
+                                Text("\(self.filteredConferences[month]!.count > 0 ? "( \(self.filteredConferences[month]!.count) )" : "")")
+                                    .foregroundStyle(.secondary)
+                                
+                            }
+                        }
+                        )
+                        .font(.system(size: 16, weight: .regular, design: .rounded))
+                        .listRowBackground(Color(.systemGray6))
+                        .accentColor(Color(.systemGray2))
+                    }
                 }
-            }
-            .listStyle(.sidebar)
-            //.background(Color(.systemGray2))
-            //.accentColor(Color(.systemPurple))
-            .scrollContentBackground(.hidden)
-            .onAppear {
-                self.isExpanded.insert(calendar.component(.month, from: Date.now))
+                .listStyle(.sidebar)
+                //.background(Color(.systemGray2))
+                //.accentColor(Color(.systemPurple))
+                .scrollContentBackground(.hidden)
+                .onAppear {
+                    self.isExpanded.insert(calendar.component(.month, from: Date.now))
+                }
+            } else {
+                ZStack(alignment: .center) {
+                    VStack(spacing: 20) {
+                        Text("O F F L I N E")
+                            .font(.system(size: 48, weight: .medium, design: .rounded))
+                            .foregroundStyle(.primary)
+                        Text("You need to online to use this app")
+                            .font(.system(size: 36, weight: .medium, design: .rounded))
+                            .foregroundStyle(.secondary)
+                    }
+                }
             }
         }
         .onChange(of: self.filter) {
