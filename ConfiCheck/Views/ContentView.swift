@@ -76,16 +76,16 @@ struct ContentView: View {
                     self.isExpanded.insert(calendar.component(.month, from: Date.now))
                 }
             } else {
-                ZStack(alignment: .center) {
-                    VStack(spacing: 20) {
-                        Text("O F F L I N E")
-                            .font(.system(size: 48, weight: .medium, design: .rounded))
-                            .foregroundStyle(.primary)
-                        Text("You need to online to use this app")
-                            .font(.system(size: 36, weight: .medium, design: .rounded))
-                            .foregroundStyle(.secondary)
-                    }
+                Spacer()
+                VStack(spacing: 20) {
+                    Text("O F F L I N E")
+                        .font(.system(size: 48, weight: .medium, design: .rounded))
+                        .foregroundStyle(.primary)
+                    Text("You need to be online")
+                        .font(.system(size: 24, weight: .medium, design: .rounded))
+                        .foregroundStyle(.secondary)
                 }
+                Spacer()
             }
         }
         .onChange(of: self.filter) {
