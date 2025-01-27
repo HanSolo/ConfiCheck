@@ -38,7 +38,7 @@ struct ContentView: View {
 
             Divider()
             
-            if self.model.networkMonitor.isConnectedToInternet {
+            if self.model.networkMonitor.isConnected {
                 List {
                     ForEach(self.filteredConferences.keys.sorted(), id: \.self) { month in
                         Section(isExpanded: Binding<Bool> (

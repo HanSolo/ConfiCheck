@@ -11,6 +11,7 @@ import PhotosUI
 
 
 struct ProfileImageView: View {
+    @Environment(\.colorScheme)  private var colorScheme
     let imageState : ProfileModel.ImageState
     
     var body: some View {
@@ -40,13 +41,15 @@ struct CircularProfileImage: View {
             .clipShape(Circle())
             .frame(width: 100, height: 100)
             .background {
-                Circle().fill(
-                    LinearGradient(
-                        colors: [Color(.systemGray2), Color(.systemGray4)],
-                        startPoint: .top,
-                        endPoint: .bottom
+                Circle()
+                    .fill(
+                        LinearGradient(
+                            colors: [Color(.systemGray2), Color(.systemGray4)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
                     )
-                )
+                    .stroke(Color.gray, lineWidth: 1)                    
             }
     }
 }

@@ -11,17 +11,10 @@ import Network
 
 class NetworkMonitor: ObservableObject {
     private let networkMonitor = NWPathMonitor()
-
-    var isConnected : Bool  = false {
-        didSet {
-            Task {
-                self.isConnectedToInternet = await RestController.isConnected()
-            }
-        }
-    }
-    var isConnectedToInternet : Bool = false
-
     
+    var isConnected : Bool  = false
+
+
     init() {
         networkMonitor.pathUpdateHandler = { path in
             self.isConnected = path.status == .satisfied

@@ -21,6 +21,8 @@ struct SpeakerInfoView: View {
     @State                       private var profileImage      : Image?
     @StateObject                 private var viewModel         : ProfileModel = ProfileModel()
     
+    private let pasteBoard = UIPasteboard.general
+    
     
     var body: some View {
         VStack {
@@ -45,6 +47,7 @@ struct SpeakerInfoView: View {
             HStack {
                 Spacer()
                 Text("Speaker Info")
+                    .font(.system(size: 18, weight: .medium, design: .rounded))
                 Spacer()
             }
             .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
@@ -55,80 +58,130 @@ struct SpeakerInfoView: View {
                     Label("Share Image", systemImage: "square.and.arrow.up")
                 }
                 .foregroundStyle(.primary)
+                .padding(EdgeInsets(top: 10, leading: 0, bottom: 0, trailing: 0))
             }
             
             Form {
-                HStack {
-                    Text("Name")
-                        .font(.system(size: 14, weight: .medium, design: .rounded))
-                        .foregroundStyle(.secondary)
-                        .frame(minWidth: 80)
-                    Spacer()
-                    TextField("Your first name and name", text: self.$speakerName)
-                        .textFieldStyle(.plain)
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text("Name")
+                            .font(.system(size: 16, weight: .medium, design: .rounded))
+                            .foregroundStyle(.primary)
+                        
+                        Spacer()
+                        
+                        Button {
+                            pasteBoard.string = self.speakerName
+                        } label: {
+                            Label("", systemImage: "document.on.document")
+                                .font(.system(size: 10, weight: .light, design: .rounded))
+                        }
+                        .foregroundStyle(.primary)
+                        .frame(minWidth: 16, maxWidth: 16)
+                    }
+                    
+                    TextField("Your first name and name", text: self.$speakerName, axis: .vertical)
+                        .textFieldStyle(.roundedBorder)
                         .font(.system(size: 14, weight: .regular, design: .rounded))
-                        .cornerRadius(6)
+                        .cornerRadius(5)
                         .foregroundStyle(.primary)
                         .multilineTextAlignment(.leading)
                         .accentColor(.accentColor)
                 }
-                .background(self.colorScheme == .dark ? .black : .white)
                 .listRowBackground(self.colorScheme == .dark ? Color.black : Color.white)
                 
-                HStack {
-                    Text("BlueSky")
-                        .font(.system(size: 14, weight: .medium, design: .rounded))
-                        .foregroundStyle(.secondary)
-                        .frame(minWidth: 80)
-                    Spacer()
-                    TextField("@YOUR_BLUESKY_NAME", text: self.$speakerBlueSky)
-                        .textFieldStyle(.plain)
+                VStack(alignment: .leading) {
+                    Divider()
+                    HStack {
+                        Text("BlueSky")
+                            .font(.system(size: 16, weight: .medium, design: .rounded))
+                            .foregroundStyle(.primary)
+                        
+                        Spacer()
+                        
+                        Button {
+                            pasteBoard.string = self.speakerBlueSky
+                        } label: {
+                            Label("", systemImage: "document.on.document")
+                                .font(.system(size: 10, weight: .light, design: .rounded))
+                        }
+                        .foregroundStyle(.primary)
+                        .frame(minWidth: 16, maxWidth: 16)
+                    }
+                                                            
+                    TextField("@YOUR_BLUESKY_NAME", text: self.$speakerBlueSky, axis: .vertical)
+                        .textFieldStyle(.roundedBorder)
                         .font(.system(size: 14, weight: .regular, design: .rounded))
-                        .cornerRadius(6)
+                        .cornerRadius(5)
                         .foregroundStyle(.primary)
                         .multilineTextAlignment(.leading)
                         .accentColor(.accentColor)
                 }
-                .background(self.colorScheme == .dark ? .black : .white)
                 .listRowBackground(self.colorScheme == .dark ? Color.black : Color.white)
+                                
+                VStack(alignment: .leading) {
+                    Divider()
+                    HStack(alignment: .top) {
+                        Text("Bio")
+                            .font(.system(size: 16, weight: .medium, design: .rounded))
+                            .foregroundStyle(.primary)
+                        
+                        Spacer()
+                        
+                        Button {
+                            pasteBoard.string = self.speakerBio
+                        } label: {
+                            Label("", systemImage: "document.on.document")
+                                .font(.system(size: 10, weight: .light, design: .rounded))
+                        }
+                        .foregroundStyle(.primary)
+                        .frame(minWidth: 16, maxWidth: 16)
+                    }
                 
-                HStack(alignment: .top) {
-                    Text("Bio")
-                        .font(.system(size: 14, weight: .medium, design: .rounded))
-                        .foregroundStyle(.secondary)
-                        .frame(minWidth: 80)
-                    Spacer()
                     TextField("Your Bio", text: self.$speakerBio, axis: .vertical)
-                        .textFieldStyle(.plain)
+                        .textFieldStyle(.roundedBorder)
                         .font(.system(size: 14, weight: .regular, design: .rounded))
-                        .cornerRadius(6)
+                        .cornerRadius(5)
                         .foregroundStyle(.primary)
                         .multilineTextAlignment(.leading)
                         .accentColor(.accentColor)
                 }
-                .background(self.colorScheme == .dark ? .black : .white)
                 .listRowBackground(self.colorScheme == .dark ? Color.black : Color.white)
                 
-                HStack(alignment: .top) {
-                    Text("Experience")
-                        .font(.system(size: 14, weight: .medium, design: .rounded))
-                        .foregroundStyle(.secondary)
-                        .frame(minWidth: 80)
-                    Spacer()
+                VStack(alignment: .leading) {
+                    Divider()
+                    HStack {
+                        Text("Experience")
+                            .font(.system(size: 16, weight: .medium, design: .rounded))
+                            .foregroundStyle(.primary)
+                        
+                        Spacer()
+                        
+                        Button {
+                            pasteBoard.string = self.speakerName
+                        } label: {
+                            Label("", systemImage: "document.on.document")
+                                .font(.system(size: 10, weight: .light, design: .rounded))
+                        }
+                        .foregroundStyle(.primary)
+                        .frame(minWidth: 16, maxWidth: 16)
+                    }
+                    
                     TextField("Conferences you spoke at", text: self.$speakerExperience, axis: .vertical)
-                        .textFieldStyle(.plain)
+                        .textFieldStyle(.roundedBorder)
                         .font(.system(size: 14, weight: .regular, design: .rounded))
-                        .cornerRadius(6)
+                        .cornerRadius(5)
                         .foregroundStyle(.primary)
                         .multilineTextAlignment(.leading)
                         .accentColor(.accentColor)
                 }
-                .background(self.colorScheme == .dark ? .black : .white)
                 .listRowBackground(self.colorScheme == .dark ? Color.black : Color.white)
             }
             
             Spacer()
         }
+        .background(self.colorScheme == .dark ? .black : .white)
+        .scrollContentBackground(.hidden)
         .onAppear {
             let profileImage : Image? = Helper.loadProfileImage()
             if profileImage != nil {
