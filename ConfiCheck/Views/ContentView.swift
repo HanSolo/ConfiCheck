@@ -15,6 +15,8 @@ struct ContentView: View {
     @State                       private var filteredConferences : [Int : [ConferenceItem]] = [:]
     @State                       private var isExpanded          : Set<Int>                 = []
     @State                       private var filter              : Int                      = 0
+    @State                       private var speakerInfoVisible  : Bool                     = false
+    @State                       private var proposalsVisible    : Bool                     = false
     
     private let formatter                                        : DateFormatter            = DateFormatter()
     private let calendar                                         : Calendar                 = .current
@@ -25,16 +27,18 @@ struct ContentView: View {
             Text("Java Conferences")
                 .font(.system(size: 24, weight: .medium, design: .rounded))
                 .foregroundStyle(.primary)
-            
+
             Picker("Filter", selection: $filter) {
                 Text("All").tag(0)
                 Text("Speaking").tag(1)
                 Text("CfP open").tag(2)
             }
             .pickerStyle(.segmented)
+            .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
+
+            Divider()
             
             if self.model.networkMonitor.isConnectedToInternet {
-                
                 List {
                     ForEach(self.filteredConferences.keys.sorted(), id: \.self) { month in
                         Section(isExpanded: Binding<Bool> (
@@ -81,12 +85,33 @@ struct ContentView: View {
                     Text("O F F L I N E")
                         .font(.system(size: 48, weight: .medium, design: .rounded))
                         .foregroundStyle(.primary)
-                    Text("You need to be online")
-                        .font(.system(size: 24, weight: .medium, design: .rounded))
+                    Text("You need to be online\nto see the conferences")
+                        .font(.system(size: 24, weight: .thin, design: .rounded))
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
             }
+            
+            Divider()
+            
+            HStack {
+                Button("Speaker Info") {
+                    self.speakerInfoVisible.toggle()
+                }
+                .buttonStyle(.bordered)
+                .foregroundStyle(.primary)
+                .font(.system(size: 14, weight: .light, design: .rounded))
+                
+                Spacer()
+                
+                Button("Proposals") {
+                    self.proposalsVisible.toggle()
+                }
+                .buttonStyle(.bordered)
+                .foregroundStyle(.primary)
+                .font(.system(size: 14, weight: .light, design: .rounded))
+            }
+            .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
         }
         .onChange(of: self.filter) {
             self.filteredConferences.removeAll()
@@ -130,6 +155,12 @@ struct ContentView: View {
                 break
             }
         }
+        .sheet(isPresented: $speakerInfoVisible) {
+            SpeakerInfoView()
+        }
+        .sheet(isPresented: $proposalsVisible) {
+            ProposalsView()
+        }        
         .task {
             self.filteredConferences.removeAll()
             let javaConferences : [JavaConference] = await RestController.fetchJavaConferences()

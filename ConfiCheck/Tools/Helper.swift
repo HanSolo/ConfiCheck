@@ -156,4 +156,138 @@ public struct Helper {
             return true
         }
     }
+    
+    public static func profileImageExists(year: Int) -> Bool {
+        let fileManager : FileManager = FileManager.default
+        let url         : URL         = FileManager.documentsDirectory.appendingPathComponent(Constants.PROFILE_IMAGE_NAME)
+        return fileManager.fileExists(atPath: url.path())
+    }
+    
+    public static func saveProfileImage(image: UIImage) -> Void {
+        Task {
+            let fileManager : FileManager = FileManager.default
+            if let data : Data = image.pngData() {
+                if let imgBookmark = Data(base64Encoded: Properties.instance.imgBookmark!.data(using: .utf8)!) {
+                    var isStale : Bool = false
+                    do {
+                        let resolvedUrl = try URL(resolvingBookmarkData: imgBookmark, options: [.withoutUI], bookmarkDataIsStale: &isStale)
+                        
+                        do {
+                            try fileManager.setAttributes([.protectionKey: FileProtectionType.none], ofItemAtPath: resolvedUrl.path)
+                        } catch {
+                            //debugPrint("Failed to set file protection. Error: \(error.localizedDescription)")
+                        }
+                        
+                        if resolvedUrl.startAccessingSecurityScopedResource() {
+                            do {
+                                try data.write(to: resolvedUrl, options: [.atomic, .noFileProtection])
+                                //debugPrint("Successfully saved img file via imgBookmark")
+                                
+                                if let bookmark = try? resolvedUrl.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil) {
+                                    Properties.instance.imgBookmark = bookmark.base64EncodedString()
+                                    //debugPrint("Successfully saved img bookmark to properties")
+                                }
+                            } catch {
+                                //debugPrint("Error saving img file. Error: \(error.localizedDescription)")
+                            }
+                        }
+                        do { resolvedUrl.stopAccessingSecurityScopedResource() }
+                    } catch let error {
+                        //debugPrint("Error resolving URL from bookmark data. Error: \(error.localizedDescription)")
+                                                                
+                        let url : URL = FileManager.documentsDirectory.appendingPathComponent(Constants.PROFILE_IMAGE_NAME)
+                        //let url : URL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: Constants.APP_GROUP_ID)!.appendingPathComponent(Constants.PROFILE_IMAGE_NAME)
+                        
+                        do {
+                            try fileManager.setAttributes([.protectionKey: FileProtectionType.none], ofItemAtPath: url.path)
+                        } catch {
+                            //debugPrint("Failed to set file protection. Error: \(error.localizedDescription)")
+                        }
+                        
+                        do {
+                            try data.write(to: url, options: [.atomic, .noFileProtection])
+                            //debugPrint("Successfully saved img file")
+                            
+                            if let bookmark = try? url.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil) {
+                                Properties.instance.imgBookmark = bookmark.base64EncodedString()
+                                //debugPrint("Successfully saved img bookmark to properties")
+                            }
+                        } catch {
+                            //debugPrint("Error saving img file. Error: \(error.localizedDescription)")
+                        }
+                    }
+                } else {
+                    let url: URL = FileManager.documentsDirectory.appendingPathComponent(Constants.PROFILE_IMAGE_NAME)
+                    //let url : URL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: Constants.APP_GROUP_ID)!.appendingPathComponent(Constants.PROFILE_IMAGE_NAME)
+                    
+                    do {
+                        try fileManager.setAttributes([.protectionKey: FileProtectionType.none], ofItemAtPath: url.path)
+                    } catch {
+                        //debugPrint("Failed to set file protection. Error: \(error.localizedDescription)")
+                    }
+                    
+                    do {
+                        try data.write(to: url, options: [.atomic, .noFileProtection])
+                        //debugPrint("Successfully saved img file")
+                        
+                        if let bookmark = try? url.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil) {
+                            Properties.instance.imgBookmark = bookmark.base64EncodedString()
+                            //debugPrint("Successfully saved img bookmark to properties")
+                        }
+                    } catch {
+                        //debugPrint("Error saving img file. Error: \(error.localizedDescription)")
+                    }
+                }
+            } else {
+                //debugPrint("Error decoding image data")
+            }
+        }
+    }
+    
+    public static func loadProfileImage() -> Image? {
+        let fileManager : FileManager = FileManager.default
+        var image       : Image?
+                
+        if let imgBookmark = Data(base64Encoded: Properties.instance.imgBookmark!.data(using: .utf8)!) {
+            var isStale : Bool = false
+            do {
+                let resolvedUrl = try URL(resolvingBookmarkData: imgBookmark, options: [.withoutUI], bookmarkDataIsStale: &isStale)
+                
+                do {
+                    try fileManager.setAttributes([.protectionKey: FileProtectionType.none], ofItemAtPath: resolvedUrl.path)
+                } catch {
+                    //debugPrint("Failed to set file protection. Error: \(error.localizedDescription)")
+                }
+                
+                if resolvedUrl.startAccessingSecurityScopedResource() {
+                    let uiImage : UIImage? = UIImage(contentsOfFile: resolvedUrl.path())
+                    if uiImage != nil {
+                        image = Image(uiImage: uiImage!)
+                    } else {
+                        //debugPrint("Error reading img file from resolvedUrl")
+                    }
+                }
+                do { resolvedUrl.stopAccessingSecurityScopedResource() }
+            } catch let error {
+                //debugPrint("Error resolving URL from bookmark data. Error: \(error.localizedDescription)")
+            }
+        } else {
+            let url : URL = FileManager.documentsDirectory.appendingPathComponent(Constants.PROFILE_IMAGE_NAME)
+            //let url : URL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: Constants.APP_GROUP_ID)!.appendingPathComponent(Constants.PROFILE_IMAGE_NAME)
+            
+            do {
+                try fileManager.setAttributes([.protectionKey: FileProtectionType.none], ofItemAtPath: url.path)
+            } catch {
+                //debugPrint("Failed to set file protection. Error: \(error.localizedDescription)")
+            }
+            
+            let uiImage : UIImage? = UIImage(contentsOfFile: url.path())
+            if uiImage != nil {
+                image = Image(uiImage: uiImage!)
+            } else {
+                //debugPrint("Error reading img file")
+            }
+        }
+        return image
+    }
 }

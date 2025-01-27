@@ -29,11 +29,14 @@ public struct Constants {
     
     public static let CITY_DELIMITER             : String = ","
     
+    public static let PROFILE_IMAGE_NAME         : String = "ProfileImage"
+    
     public static let GRAY                       : Color  = Color.gray
     public static let RED                        : Color  = Color(red: 0.996, green: 0.000, blue: 0.000, opacity: 1.00) // RGB 254,   0, 0
     public static let ORANGE                     : Color  = Color(red: 1.000, green: 0.365, blue: 0.004, opacity: 1.00) // RGB 255,  93, 0
     public static let YELLOW                     : Color  = Color(red: 1.000, green: 0.659, blue: 0.000, opacity: 1.00) // RGB 255, 168, 0
     public static let GREEN                      : Color  = Color(red: 0.000, green: 0.761, blue: 0.004, opacity: 1.00) //   0, 194, 1
+    
     
     public enum ConferenceType {
         case inPerson
