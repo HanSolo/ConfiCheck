@@ -8,18 +8,19 @@
 import SwiftUI
 import SwiftData
 
+
 struct ContentView: View {
-    @Environment(\.modelContext) private var modelContext
-    @EnvironmentObject           private var model               : ConfiModel
-    @State                       private var conferencesPerMonth : [Int : [ConferenceItem]] = [:]
-    @State                       private var filteredConferences : [Int : [ConferenceItem]] = [:]
-    @State                       private var isExpanded          : Set<Int>                 = []
-    @State                       private var filter              : Int                      = 0
-    @State                       private var speakerInfoVisible  : Bool                     = false
-    @State                       private var proposalsVisible    : Bool                     = false
+    @Environment(\.modelContext) private var context
+    @EnvironmentObject           private var model              : ConfiModel
+    @State                       private var isExpanded         : Set<Int>      = []
+    @State                       private var filter             : Int           = 0
+    @State                       private var speakerInfoVisible : Bool          = false
+    @State                       private var proposalsVisible   : Bool          = false
     
-    private let formatter                                        : DateFormatter            = DateFormatter()
-    private let calendar                                         : Calendar                 = .current
+    //@Query(sort: [SortDescriptor(\ProposalItem.title, comparator: .localizedStandard)]) private var proposals: [ProposalItem]
+    
+    private let formatter                                       : DateFormatter = DateFormatter()
+    private let calendar                                        : Calendar      = .current
     
             
     var body: some View {
@@ -40,7 +41,7 @@ struct ContentView: View {
             
             if self.model.networkMonitor.isConnected {
                 List {
-                    ForEach(self.filteredConferences.keys.sorted(), id: \.self) { month in
+                    ForEach(self.model.filteredConferences.keys.sorted(), id: \.self) { month in
                         Section(isExpanded: Binding<Bool> (
                             get: {
                                 return isExpanded.contains(month)
@@ -54,14 +55,14 @@ struct ContentView: View {
                             }
                         ),
                                 content: {
-                            ForEach(self.filteredConferences[month]!.sorted(by: { $0.date < $1.date })) { conference in
+                            ForEach(self.model.filteredConferences[month]!.sorted(by: { $0.date < $1.date })) { conference in
                                 ConferenceView(conference: conference)
                             }
                         },
                                 header: {
                             HStack {
                                 Text("\(formatter.monthSymbols[month-1].capitalized)")
-                                Text("\(self.filteredConferences[month]!.count > 0 ? "( \(self.filteredConferences[month]!.count) )" : "")")
+                                Text("\(self.model.filteredConferences[month]!.count > 0 ? "( \(self.model.filteredConferences[month]!.count) )" : "")")
                                     .foregroundStyle(.secondary)
                                 
                             }
@@ -103,7 +104,7 @@ struct ContentView: View {
                 .font(.system(size: 14, weight: .light, design: .rounded))
                 
                 Spacer()
-                
+                                
                 Button("Proposals") {
                     self.proposalsVisible.toggle()
                 }
@@ -114,22 +115,22 @@ struct ContentView: View {
             .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
         }
         .onChange(of: self.filter) {
-            self.filteredConferences.removeAll()
+            self.model.filteredConferences.removeAll()
             switch filter {
             case 0:
-                self.filteredConferences = self.conferencesPerMonth
+                self.model.filteredConferences = self.model.conferencesPerMonth
                 self.isExpanded.removeAll()
                 self.isExpanded.insert(calendar.component(.month, from: Date.now))
                 break
             case 1:
-                for month in self.conferencesPerMonth.keys {
-                    for conference in self.conferencesPerMonth[month] ?? [] {
+                for month in self.model.conferencesPerMonth.keys {
+                    for conference in self.model.conferencesPerMonth[month] ?? [] {
                         if self.model.attendence.keys.contains(where: { $0 == conference.id }) {
                             if self.model.attendence[conference.id] != 2 { continue }
-                            if !filteredConferences.keys.contains(month) {
-                                filteredConferences[month] = []
+                            if !self.model.filteredConferences.keys.contains(month) {
+                                self.model.filteredConferences[month] = []
                             }
-                            filteredConferences[month]!.append(conference)
+                            self.model.filteredConferences[month]!.append(conference)
                         }
                     }
                 }
@@ -139,11 +140,11 @@ struct ContentView: View {
                 }
                 break
             case 2:
-                for month in self.conferencesPerMonth.keys {
-                    if self.conferencesPerMonth[month]?.isEmpty ?? true { continue }
-                    self.filteredConferences[month] = self.conferencesPerMonth[month]?.filter({ $0.cfpDate != nil })
-                                                                                      .filter({ Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0 != nil })
-                                                                                      .filter({ Helper.isCfpOpen(date: Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0!) })
+                for month in self.model.conferencesPerMonth.keys {
+                    if self.model.conferencesPerMonth[month]?.isEmpty ?? true { continue }
+                    self.model.filteredConferences[month] = self.model.conferencesPerMonth[month]?.filter({ $0.cfpDate != nil })
+                                                                                                  .filter({ Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0 != nil })
+                                                                                                  .filter({ Helper.isCfpOpen(date: Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0!) })
                 }
                 self.isExpanded.removeAll()
                 for month in 1...12 {
@@ -151,7 +152,7 @@ struct ContentView: View {
                 }
                 break
             default:
-                self.filteredConferences = self.conferencesPerMonth
+                self.model.filteredConferences = self.model.conferencesPerMonth
                 break
             }
         }
@@ -159,23 +160,87 @@ struct ContentView: View {
             SpeakerInfoView()
         }
         .sheet(isPresented: $proposalsVisible) {
+            //ProposalsView(proposals: self.proposals)
             ProposalsView()
-        }        
+        }
         .task {
-            self.filteredConferences.removeAll()
             let javaConferences : [JavaConference] = await RestController.fetchJavaConferences()
             for javaConference in javaConferences {
                 let conference : ConferenceItem = JavaConference.convertToConferenceItem(javaConference: javaConference)
                 if javaConference.date == nil { continue }
-                let month : Int = calendar.component(.month, from: conference.date)
-                if !self.conferencesPerMonth.keys.contains(month) {
-                    self.conferencesPerMonth[month] = []
-                    self.filteredConferences[month] = []
-                }
-                self.conferencesPerMonth[month]!.append(conference)
-                self.filteredConferences[month]!.append(conference)
                 self.model.conferences.append(conference)
-            }            
+            }
+            self.model.update.toggle()
+            resetAllItems()
+            storeItemsToCloudKit()
+        }
+    }
+    
+    // CloudKit related functions
+    private func storeItemsToCloudKit() -> Void {
+        // Upload Items to CloudKit if not already happened today
+        do {
+           let lastItemsSaved : Date = Date(timeIntervalSince1970: Properties.instance.lastItemsSaved!)
+            if calendar.component(.day, from: lastItemsSaved) != calendar.component(.day, from: Date.now) {
+                if self.model.conferences.count > 0 {
+                    for conference in self.model.conferences {
+                        context.insert(conference)
+                    }
+                    try context.save()
+                    Properties.instance.lastItemsSaved = Date.now.timeIntervalSince1970
+                    debugPrint("Conferences saved to CloudKit")
+                } else {
+                    debugPrint("No conferences loaded -> not saved")
+                }
+            } else {
+                debugPrint("Items have been already saved to CloudKit today")
+            }
+        } catch {
+            debugPrint(error)
+        }
+    }
+    private func loadItemsFromCloudKit() -> Void {
+        // Conference Items
+        self.model.conferences.removeAll()
+        let requestConferences = FetchDescriptor<ConferenceItem>()
+        let conferenceItems : [ConferenceItem] = try! context.fetch(requestConferences)
+        if !conferenceItems.isEmpty {
+            if self.model.conferences.isEmpty {
+                for conference in conferenceItems {
+                    self.model.conferences.append(conference)
+                }
+            }
+        }
+        debugPrint("\(conferenceItems.count) conference items loaded from CloudKit")
+        self.model.conferences = self.model.conferences.uniqueElements()
+        self.model.update.toggle()
+                                        
+        // Remove duplicates if needed
+        if conferenceItems.count != self.model.conferences.count {
+            removeDuplicatesFromCloudKit()
+        }
+    }
+    private func removeDuplicatesFromCloudKit() -> Void {
+        resetAllItems()
+        let cleanedUpConferenceItems : [ConferenceItem] = self.model.conferences.uniqueElements()
+        
+        do {
+            for conferenceItem in cleanedUpConferenceItems {
+                context.insert(conferenceItem)
+            }
+            
+            try context.save()
+            debugPrint("Removed duplicates from CloudKit")
+        } catch {
+            debugPrint("Error removing duplicates from CloudKit. \(error)")
+        }
+    }
+    private func resetAllItems() -> Void {
+        do {
+            try context.delete(model: ConferenceItem.self)
+            debugPrint("Reset all items")
+        } catch {
+            debugPrint("Error resetting all items. \(error)")
         }
     }
 }

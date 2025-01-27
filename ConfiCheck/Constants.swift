@@ -12,6 +12,7 @@ import SwiftUI
 public struct Constants {
     public static let APP_NAME                   : String = "ConfiCheck"
     public static let APP_GROUP_ID               : String = "group.eu.hansolo.ConfiCheck"
+    public static let CONTAINER_ID               : String = "iCloud.eu.hansolo.ConfiCheckContainer"
     public static let APP_REFRESH_ID             : String = "eu.hansolo.ConfiCheck.refresh"
     public static let APP_REFRESH_INTERVAL       : Double = 3600 // refresh app every 20 minutes in background
     public static let CANVAS_REFRESH_INTERVAL    : Double = 1

@@ -53,7 +53,7 @@ struct ConferenceView: View {
                 // Conference Date
                 Text(verbatim: "\(self.formatter.string(from: conference.date))")
                     .font(.system(size: 12, weight: .regular, design: .rounded))
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(.primary)
                 
                 Spacer()
                 
