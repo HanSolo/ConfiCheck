@@ -12,11 +12,13 @@ import SwiftData
 final class ProposalItem: Identifiable, Equatable, Hashable {
     var title    : String = ""
     var abstract : String = ""
+    var pitch    : String = ""
     
     
-    init(title : String, abstract : String) {
+    init(title : String, abstract : String, pitch: String) {
         self.title    = title
         self.abstract = abstract
+        self.pitch    = pitch
     }
     
     var id: String {

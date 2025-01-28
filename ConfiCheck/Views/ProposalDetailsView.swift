@@ -18,7 +18,8 @@ struct ProposalDetailsView: View {
     
     @State private var title    : String = ""
     @State private var abstract : String = ""
-    @State private var maxChars : Int   = 80
+    @State private var pitch     : String = ""
+    @State private var maxChars : Int   = 200
 
     let proposal: ProposalItem
 
@@ -35,6 +36,7 @@ struct ProposalDetailsView: View {
                     .font(.system(size: 16, weight: .regular, design: .rounded))
                     .foregroundStyle(.secondary)
                 TextField("Enter title", text: text, axis: .vertical)
+                    .disableAutocorrection(true)
                     .textFieldStyle(.plain)
                     .font(.system(size: 14, weight: .regular, design: .rounded))
                     .cornerRadius(6)
@@ -50,6 +52,23 @@ struct ProposalDetailsView: View {
                     .font(.system(size: 16, weight: .regular, design: .rounded))
                     .foregroundStyle(.secondary)
                 TextField("Enter abstract", text: $abstract, axis: .vertical)
+                    .disableAutocorrection(true)
+                    .textFieldStyle(.plain)
+                    .font(.system(size: 14, weight: .regular, design: .rounded))
+                    .cornerRadius(6)
+                    .foregroundStyle(.primary)
+                    .multilineTextAlignment(.leading)
+                    .accentColor(.accentColor)
+            }
+            .background(self.colorScheme == .dark ? .black : .white)
+            .listRowBackground(self.colorScheme == .dark ? Color.black : Color.white)
+            
+            VStack(alignment: .leading) {
+                Text("Pitch")
+                    .font(.system(size: 16, weight: .regular, design: .rounded))
+                    .foregroundStyle(.secondary)
+                TextField("Enter pitch", text: $pitch, axis: .vertical)
+                    .disableAutocorrection(true)
                     .textFieldStyle(.plain)
                     .font(.system(size: 14, weight: .regular, design: .rounded))
                     .cornerRadius(6)
@@ -63,6 +82,7 @@ struct ProposalDetailsView: View {
             Button("Update") {
                 proposal.title    = title
                 proposal.abstract = abstract
+                proposal.pitch   = pitch
 
                 do {
                     try context.save()
@@ -80,7 +100,8 @@ struct ProposalDetailsView: View {
         .background(self.colorScheme == .dark ? .black : .white)
         .onAppear {
             self.title    = proposal.title
-            self.abstract = proposal.abstract            
+            self.abstract = proposal.abstract
+            self.pitch    = proposal.pitch
         }
     }
 }

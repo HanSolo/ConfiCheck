@@ -21,6 +21,7 @@ struct AddProposalView: View {
     
     @State private var title    : String = ""
     @State private var abstract : String = ""
+    @State private var pitch    : String = ""
     @State private var maxChars : Int    = 200
 
     
@@ -39,7 +40,24 @@ struct AddProposalView: View {
             let bgColor : Color = self.colorScheme == .dark ? .black : .white
             
             HStack {
+                Button("Save") {
+                    let proposal : ProposalItem = ProposalItem(title: self.title, abstract: self.abstract, pitch: self.pitch)
+                    context.insert(proposal)
+                    do {
+                        try context.save()
+                        self.model.proposals.append(proposal)
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                    dismiss()
+                }
+                .padding()
+                .disabled(!isFormValid)
+                .buttonStyle(.bordered)
+                .foregroundStyle(.primary)
+                
                 Spacer()
+                
                 Button("Close") {
                     dismiss()
                 }
@@ -54,6 +72,7 @@ struct AddProposalView: View {
                         .font(.system(size: 16, weight: .regular, design: .rounded))
                         .foregroundStyle(.secondary)
                     TextField("Enter title", text: text, axis: .vertical)
+                        .disableAutocorrection(true)
                         .textFieldStyle(.plain)
                         .font(.system(size: 14, weight: .regular, design: .rounded))
                         .cornerRadius(6)
@@ -68,6 +87,7 @@ struct AddProposalView: View {
                         .font(.system(size: 16, weight: .regular, design: .rounded))
                         .foregroundStyle(.secondary)
                     TextField("Enter abstract", text: $abstract, axis: .vertical)
+                        .disableAutocorrection(true)
                         .textFieldStyle(.plain)
                         .font(.system(size: 14, weight: .regular, design: .rounded))
                         .cornerRadius(6)
@@ -77,25 +97,20 @@ struct AddProposalView: View {
                 }
                 .listRowBackground(bgColor)
                 
-                HStack {
-                    Spacer()
-                    
-                    Button("Save") {
-                        let proposal : ProposalItem = ProposalItem(title: self.title, abstract: self.abstract)
-                        context.insert(proposal)
-                        do {
-                            try context.save()
-                        } catch {
-                            print(error.localizedDescription)
-                        }
-                        dismiss()
-                    }
-                    .disabled(!isFormValid)
-                    .buttonStyle(.bordered)
-                    .listRowBackground(bgColor)
-                    .foregroundStyle(self.colorScheme == .dark ? .white : .black)
+                VStack(alignment: .leading) {
+                    Text("Pitch")
+                        .font(.system(size: 16, weight: .regular, design: .rounded))
+                        .foregroundStyle(.secondary)
+                    TextField("Enter pitch", text: $pitch, axis: .vertical)
+                        .disableAutocorrection(true)
+                        .textFieldStyle(.plain)
+                        .font(.system(size: 14, weight: .regular, design: .rounded))
+                        .cornerRadius(6)
+                        .foregroundStyle(.primary)
+                        .multilineTextAlignment(.leading)
+                        .accentColor(.accentColor)
                 }
-                .listRowBackground(Color.clear)
+                .listRowBackground(bgColor)
             }
             .scrollContentBackground(.hidden)
             .background(bgColor)

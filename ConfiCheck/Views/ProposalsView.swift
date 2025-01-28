@@ -13,122 +13,132 @@ struct ProposalsView: View {
     @Environment(\.dismiss)      private var dismiss
     @Environment(\.modelContext) private var context
     @Environment(\.colorScheme)  private var colorScheme
-    @EnvironmentObject           private var model     : ConfiModel
-    
-    //let proposals: [ProposalItem]
-    @State var filtered               : [ProposalItem] = []
-    @State var addProposalViewVisible : Bool           = false
+    @EnvironmentObject           private var model                  : ConfiModel
+    @State                       private var filtered               : [ProposalItem] = []
+    @State                       private var addProposalViewVisible : Bool           = false
+    @State                       private var showNotice             : Bool           = false
         
     private let pasteBoard = UIPasteboard.general
     
     
     var body: some View {
         NavigationStack {
-            VStack {
-                HStack {
-                    Button {
-                        self.addProposalViewVisible = true
-                    } label: {
-                        Image(systemName: "plus.circle")
-                            .foregroundColor(self.colorScheme == .dark ? .white : .black)
-                            .font(.system(size: 14, weight: .regular, design: .rounded))
-                    }
-                    .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
-                    .buttonStyle(.bordered)
-                    .foregroundStyle(.primary)
-                    
-                    Spacer()
-                    
-                    Button("Close") {
-                        dismiss()
-                    }
-                    .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
-                    .buttonStyle(.bordered)
-                    .foregroundStyle(.primary)
-                }
-                
-                HStack {
-                    Spacer()
-                    Text("Proposals")
-                        .font(.system(size: 18, weight: .medium, design: .rounded))
-                    Spacer()
-                }
-                .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
-                
-                
-                List {
-                    ForEach(filtered, id:\.self) { proposal in
-                        NavigationLink(value: proposal) {
-                            VStack(alignment: .leading, spacing: 20) {
-                                Divider()
-                                HStack {
-                                    Text("Title")
-                                        .font(.system(size: 16, weight: .medium, design: .rounded))
-                                        .foregroundStyle(.secondary)
-                                    
-                                    Spacer()
-                                    
-                                    Button {
-                                        pasteBoard.string = proposal.title
-                                    } label: {
-                                        Label("", systemImage: "document.on.document")
-                                            .font(.system(size: 10, weight: .light, design: .rounded))
-                                    }
-                                    .foregroundStyle(.primary)
-                                    .frame(minWidth: 16, maxWidth: 16)
-                                }
-                                
-                                Text(proposal.title)
-                                    .font(.system(size: 14, weight: .regular, design: .rounded))
-                                    .multilineTextAlignment(.leading)
-                                
-                                
-                                HStack {
-                                    Text("Abstract")
-                                        .font(.system(size: 16, weight: .medium, design: .rounded))
-                                        .foregroundStyle(.secondary)
-                                     
-                                    Spacer()
-                                     
-                                    Button {
-                                        pasteBoard.string = proposal.abstract
-                                    } label: {
-                                        Label("", systemImage: "document.on.document")
-                                            .font(.system(size: 10, weight: .light, design: .rounded))
-                                    }
-                                    .foregroundStyle(.primary)
-                                    .frame(minWidth: 16, maxWidth: 16)
-                                }
-                                Text(proposal.abstract)
-                                    .font(.system(size: 14, weight: .regular, design: .rounded))
-                                    .multilineTextAlignment(.leading)
-                            }
+            ZStack {
+                VStack {
+                    HStack {
+                        Button("Add") {
+                            self.addProposalViewVisible = true
                         }
-                        .listRowBackground(self.colorScheme == .dark ? Color(red: 0.1, green: 0.1, blue: 0.1) : Color(red: 0.9, green: 0.9, blue: 0.9))
+                        .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
+                        .buttonStyle(.bordered)
+                        .foregroundStyle(.primary)
+                        
+                        Spacer()
+                        
+                        Button("Close") {
+                            dismiss()
+                        }
+                        .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
+                        .buttonStyle(.bordered)
+                        .foregroundStyle(.primary)
                     }
-                    .onDelete(perform: deleteProposal)
+                    
+                    HStack {
+                        Spacer()
+                        Text("Proposals")
+                            .font(.system(size: 18, weight: .medium, design: .rounded))
+                        Spacer()
+                    }
+                    .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
+                    
+                    List {
+                        ForEach(filtered, id:\.self) { proposal in
+                            HStack {
+                                Button {
+                                    pasteBoard.string = collectProposalInfo(proposal: proposal)
+                                    self.showNotice = true
+                                } label: {
+                                    HStack {
+                                        Image(systemName: "arrowshape.down")
+                                        Spacer()
+                                        Label("Copy proposal", systemImage: "document.on.document")
+                                            .font(.system(size: 12, weight: .light, design: .rounded))
+                                        Spacer()
+                                        Image(systemName: "arrowshape.down")
+                                    }
+                                }
+                                .foregroundStyle(.primary)
+                            }
+                            NavigationLink(value: proposal) {
+                                VStack(alignment: .leading, spacing: 5) {
+                                    Divider()
+                                    HStack {
+                                        Text("Title")
+                                            .font(.system(size: 16, weight: .medium, design: .rounded))
+                                            .foregroundStyle(.secondary)
+                                        Spacer()
+                                    }
+                                    Text(proposal.title)
+                                        .font(.system(size: 14, weight: .regular, design: .rounded))
+                                        .multilineTextAlignment(.leading)
+                                                                        
+                                    HStack {
+                                        Text("Abstract")
+                                            .font(.system(size: 16, weight: .medium, design: .rounded))
+                                            .foregroundStyle(.secondary)
+                                        Spacer()
+                                    }
+                                    Text(proposal.abstract)
+                                        .font(.system(size: 14, weight: .regular, design: .rounded))
+                                        .multilineTextAlignment(.leading)
+                                    
+                                    HStack {
+                                        Text("Pitch")
+                                            .font(.system(size: 16, weight: .medium, design: .rounded))
+                                            .foregroundStyle(.secondary)
+                                        Spacer()
+                                    }
+                                    Text(proposal.pitch)
+                                        .font(.system(size: 14, weight: .regular, design: .rounded))
+                                        .multilineTextAlignment(.leading)
+                                }
+                            }
+                            .listRowBackground(self.colorScheme == .dark ? Color(red: 0.1, green: 0.1, blue: 0.1) : Color(red: 0.9, green: 0.9, blue: 0.9))
+                        }
+                        .onDelete(perform: deleteProposal)
+                    }
+                    .scrollContentBackground(.hidden)
+                    .background(self.colorScheme == .dark ? .black : .white)
+                    .navigationDestination(for: ProposalItem.self) { proposal in
+                        ProposalDetailsView(proposal: proposal)
+                    }
+                    .foregroundStyle(self.colorScheme == .dark ? .white : .black)
+                    
+                    Spacer()
                 }
-                .scrollContentBackground(.hidden)
                 .background(self.colorScheme == .dark ? .black : .white)
-                .navigationDestination(for: ProposalItem.self) { proposal in
-                    ProposalDetailsView(proposal: proposal)
-                }
-                .foregroundStyle(self.colorScheme == .dark ? .white : .black)
                 
-                Spacer()
+                if showNotice {
+                    FloatingNotice(showNotice: $showNotice)
+                        .zIndex(1)
+                }
             }
-            .background(self.colorScheme == .dark ? .black : .white)
         }
         .accentColor(.primary)
         .sheet(isPresented: $addProposalViewVisible) {
             AddProposalView()
+                .onDisappear {
+                    self.loadItemsFromCloudKit()
+                }
         }
         .onAppear(perform: loadItemsFromCloudKit)
-        /*
-        task {
-            self.filtered = self.model.proposals
-        }
-        */
+    }
+    
+    private func collectProposalInfo(proposal: ProposalItem) -> String {
+        var info : String = "Title:\n\(proposal.title)\n\n"
+        info += "Abstract:\n\(proposal.abstract)\n\n"
+        info += "Pitch:\n\(proposal.pitch)"
+        return info
     }
     
     private func deleteProposal(indexSet: IndexSet) {
@@ -161,8 +171,8 @@ struct ProposalsView: View {
             debugPrint(error)
         }
     }
-    private func loadItemsFromCloudKit() -> Void {
-        // Conference Items
+    private func loadItemsFromCloudKit() -> Void {        
+        // Proposal Items
         self.model.proposals.removeAll()
         let requestProposals = FetchDescriptor<ProposalItem>()
         let proposalItems : [ProposalItem] = try! context.fetch(requestProposals)

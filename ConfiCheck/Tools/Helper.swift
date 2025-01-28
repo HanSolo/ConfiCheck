@@ -130,7 +130,7 @@ public struct Helper {
     public static func getColorForCfpDate(date: Date) -> Color {
         let now : Date = Date.now
         let diffs = calendar.dateComponents([.year, .month, .day], from: now, to: date)
-                        
+        
         if diffs.month! < 0 && diffs.day! <= 0 {
             return Constants.GRAY
         } else if  diffs.month! == 0 && diffs.day! < 0 {
@@ -139,7 +139,7 @@ public struct Helper {
             return Constants.YELLOW
         } else if diffs.month! == 0 && diffs.day! > 14 {
             return Constants.ORANGE
-        } else if diffs.month! == 0 && diffs.day! >= 7 {
+        } else if diffs.month! == 0 && diffs.day! <= 7 {
             return Constants.RED
         } else {            
             return Constants.GREEN
@@ -284,6 +284,53 @@ public struct Helper {
             let uiImage : UIImage? = UIImage(contentsOfFile: url.path())
             if uiImage != nil {
                 image = Image(uiImage: uiImage!)
+            } else {
+                //debugPrint("Error reading img file")
+            }
+        }
+        return image
+    }
+    
+    public static func loadProfileUIImage() -> UIImage? {
+        let fileManager : FileManager = FileManager.default
+        var image       : UIImage?
+                
+        if let imgBookmark = Data(base64Encoded: Properties.instance.imgBookmark!.data(using: .utf8)!) {
+            var isStale : Bool = false
+            do {
+                let resolvedUrl = try URL(resolvingBookmarkData: imgBookmark, options: [.withoutUI], bookmarkDataIsStale: &isStale)
+                
+                do {
+                    try fileManager.setAttributes([.protectionKey: FileProtectionType.none], ofItemAtPath: resolvedUrl.path)
+                } catch {
+                    //debugPrint("Failed to set file protection. Error: \(error.localizedDescription)")
+                }
+                
+                if resolvedUrl.startAccessingSecurityScopedResource() {
+                    let uiImage : UIImage? = UIImage(contentsOfFile: resolvedUrl.path())
+                    if uiImage != nil {
+                        image = uiImage!
+                    } else {
+                        //debugPrint("Error reading img file from resolvedUrl")
+                    }
+                }
+                do { resolvedUrl.stopAccessingSecurityScopedResource() }
+            } catch let error {
+                //debugPrint("Error resolving URL from bookmark data. Error: \(error.localizedDescription)")
+            }
+        } else {
+            let url : URL = FileManager.documentsDirectory.appendingPathComponent(Constants.PROFILE_IMAGE_NAME)
+            //let url : URL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: Constants.APP_GROUP_ID)!.appendingPathComponent(Constants.PROFILE_IMAGE_NAME)
+            
+            do {
+                try fileManager.setAttributes([.protectionKey: FileProtectionType.none], ofItemAtPath: url.path)
+            } catch {
+                //debugPrint("Failed to set file protection. Error: \(error.localizedDescription)")
+            }
+            
+            let uiImage : UIImage? = UIImage(contentsOfFile: url.path())
+            if uiImage != nil {
+                image = uiImage!
             } else {
                 //debugPrint("Error reading img file")
             }
