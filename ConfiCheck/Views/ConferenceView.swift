@@ -9,10 +9,10 @@ import SwiftUI
 import CoreLocation
 
 struct ConferenceView: View {
-    @EnvironmentObject private var model         : ConfiModel
-    @State             private var conference    : ConferenceItem
-    @State             private var selectedIndex : Int = 0
-    
+    @EnvironmentObject private var model                   : ConfiModel
+    @State             private var conference              : ConferenceItem
+    @State             private var selectedAttendenceIndex : Int = 0
+
     let formatter : DateFormatter
     
     
@@ -105,6 +105,7 @@ struct ConferenceView: View {
                 
                 // Open in Maps
                 Button {
+                    
                 } label: {
                     HStack {
                         Text("Map")
@@ -149,26 +150,50 @@ struct ConferenceView: View {
                 Spacer()
                 
                 Menu {
-                    Picker(selection: $selectedIndex) {
+                    Picker(selection: $selectedAttendenceIndex) {
                         Text("\(Constants.AttendingStatus.notAttending.uiString)").tag(0)
                         Text("\(Constants.AttendingStatus.attending.uiString)").tag(1)
                         Text("\(Constants.AttendingStatus.speaking.uiString)").tag(2)
                     } label: {}
                 } label: {                    
-                    Text("\(Constants.AttendingStatus.getUiStrings()[self.selectedIndex])")
+                    Text("\(Constants.AttendingStatus.getUiStrings()[self.selectedAttendenceIndex])")
                         .font(.system(size: 14, weight: .light, design: .rounded))
-                        .foregroundStyle(self.selectedIndex == 2 ? Constants.GREEN : .secondary)
+                        .foregroundStyle(self.selectedAttendenceIndex == 2 ? Constants.GREEN : .secondary)
                 }
             }
+            
+            /* Proposals
+            if self.model.proposals.count > 0 {
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text("Proposals")
+                            .font(.system(size: 14, weight: .light, design: .rounded))
+                        
+                        Spacer()
+                        
+                        Button {
+                            //self.addProposalViewVisible = true
+                        } label: {
+                            Label("", systemImage: "plus.circle")
+                                .padding()
+                                .foregroundStyle(.secondary)
+                                .font(.system(size: 14, weight: .light, design: .rounded))
+                        }
+                        .buttonStyle(.plain)
+                        .foregroundStyle(.primary)
+                    }
+                }
+            }
+            */
         }
         .task {
             if self.model.attendence.keys.contains(where: { $0 == self.conference.id }) {                
                 let index : Int = self.model.attendence[self.conference.id] ?? 0
-                self.selectedIndex = index
+                self.selectedAttendenceIndex = index
             }
         }
-        .onChange(of: self.selectedIndex) {
-            self.model.attendence[self.conference.id] = self.selectedIndex
+        .onChange(of: self.selectedAttendenceIndex) {
+            self.model.attendence[self.conference.id] = self.selectedAttendenceIndex
         }
     }
 }

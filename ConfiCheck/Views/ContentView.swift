@@ -16,9 +16,6 @@ struct ContentView: View {
     @State                       private var filter             : Int           = 0
     @State                       private var speakerInfoVisible : Bool          = false
     @State                       private var proposalsVisible   : Bool          = false
-    
-    //@Query(sort: [SortDescriptor(\ProposalItem.title, comparator: .localizedStandard)]) private var proposals: [ProposalItem]
-    
     private let formatter                                       : DateFormatter = DateFormatter()
     private let calendar                                        : Calendar      = .current
     
@@ -38,6 +35,7 @@ struct ContentView: View {
             .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
 
             Divider()
+                .overlay(.secondary)
             
             if self.model.networkMonitor.isConnected {
                 List {
@@ -54,12 +52,18 @@ struct ContentView: View {
                                 }
                             }
                         ),
-                                content: {
+                        content: {
                             ForEach(self.model.filteredConferences[month]!.sorted(by: { $0.date < $1.date })) { conference in
                                 ConferenceView(conference: conference)
+                                    .alignmentGuide(.listRowSeparatorLeading) { d in
+                                        d[.leading]
+                                    }
+                                    .alignmentGuide(.listRowSeparatorTrailing) { d in
+                                        d[.trailing]
+                                    }
                             }
                         },
-                                header: {
+                        header: {
                             HStack {
                                 Text("\(formatter.monthSymbols[month-1].capitalized)")
                                 Text("\(self.model.filteredConferences[month]!.count > 0 ? "( \(self.model.filteredConferences[month]!.count) )" : "")")
@@ -70,6 +74,9 @@ struct ContentView: View {
                         )
                         .font(.system(size: 16, weight: .regular, design: .rounded))
                         .listRowBackground(Color(.systemGray6))
+                        .listRowSeparator(.automatic)
+                        .listRowSeparatorTint(.secondary)
+                        .listRowSpacing(0)
                         .accentColor(Color(.systemGray2))
                     }
                 }
@@ -94,6 +101,7 @@ struct ContentView: View {
             }
             
             Divider()
+                .overlay(.secondary)
             
             HStack {
                 Button("Speaker Info") {
@@ -173,6 +181,7 @@ struct ContentView: View {
             self.model.update.toggle()
             resetAllItems()
             storeItemsToCloudKit()
+            loadProposalItemsFromCloudKit()
         }
     }
     
@@ -242,5 +251,21 @@ struct ContentView: View {
         } catch {
             debugPrint("Error resetting all items. \(error)")
         }
+    }
+    
+    private func loadProposalItemsFromCloudKit() -> Void {
+        // Proposal Items
+        self.model.proposals.removeAll()
+        let requestProposals = FetchDescriptor<ProposalItem>()
+        let proposalItems : [ProposalItem] = try! context.fetch(requestProposals)
+        if !proposalItems.isEmpty {
+            if self.model.proposals.isEmpty {
+                for proposal in proposalItems {
+                    self.model.proposals.append(proposal)
+                }
+            }
+        }
+        debugPrint("\(proposalItems.count) proposal items loaded from CloudKit")
+        self.model.proposals = self.model.proposals.uniqueElements()
     }
 }
