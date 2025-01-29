@@ -70,10 +70,19 @@ public struct Constants {
         }
     }
     
-    public enum AttendingStatus {
+    public enum AttendingStatus: String, CaseIterable {
         case notAttending
         case attending
         case speaking
+        
+        init?(id: Int) {
+            switch id {
+                case 0: self = .notAttending
+                case 1: self = .attending
+                case 2: self = .speaking
+                default: return nil
+            }
+        }
         
         var uiString: String {
             switch self {
@@ -90,6 +99,15 @@ public struct Constants {
                 case .speaking     : return "speaking"
             }
         }
+        
+        var color: Color {
+            switch self {
+                case .notAttending : return .secondary
+                case .attending    : return .primary
+                case .speaking     : return .green
+            }
+        }
+            
         
         public static func fromText(text: String) -> AttendingStatus? {
             switch text {
@@ -114,11 +132,21 @@ public struct Constants {
         }
     }
     
-    public enum ProposalStatus {
+    public enum ProposalStatus: String, Codable, CaseIterable {
         case notSubmitted
         case submitted
         case accepted
         case rejected
+        
+        init?(id: Int) {
+            switch id {
+                case 0: self = .notSubmitted
+                case 1: self = .submitted
+                case 2: self = .accepted
+                case 3: self = .rejected
+                default: return nil
+            }
+        }
         
         var uiString: String {
             switch self {
@@ -135,6 +163,24 @@ public struct Constants {
                 case .submitted    : return "submitted"
                 case .accepted     : return "accepted"
                 case .rejected     : return "rejected"
+            }
+        }
+        
+        var color: Color {
+            switch self {
+                case .notSubmitted : return .secondary
+                case .submitted    : return .primary
+                case .accepted     : return .green
+                case .rejected     : return .red
+            }
+        }
+        
+        var index: Int {
+            switch self {
+                case .notSubmitted : return 0
+                case .submitted    : return 1
+                case .accepted     : return 2
+                case .rejected     : return 3
             }
         }
         
@@ -156,6 +202,10 @@ public struct Constants {
                 case "rejected", "Rejected"           : return 3
                 default                               : return 0
             }
+        }
+        
+        public static func getUiStrings() -> [String] {
+            return [ ProposalStatus.notSubmitted.uiString, ProposalStatus.submitted.uiString, ProposalStatus.accepted.uiString, ProposalStatus.rejected.uiString ]
         }
     }
 }

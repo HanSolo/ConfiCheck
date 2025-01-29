@@ -78,5 +78,4 @@ struct CfpView: View {
                 Spacer()
             }
         }
-    }
-
+}

@@ -11,7 +11,7 @@ import SwiftUI
 
 @MainActor
 public class ConfiModel: ObservableObject {
-    @Published var networkMonitor      : NetworkMonitor           = NetworkMonitor()
+    @Published var networkMonitor      : NetworkMonitor           = NetworkMonitor()    
     @Published var conferences         : [ConferenceItem]         = []
     @Published var conferencesPerMonth : [Int : [ConferenceItem]] = [:]
     @Published var filteredConferences : [Int : [ConferenceItem]] = [:]
@@ -21,11 +21,13 @@ public class ConfiModel: ObservableObject {
             Properties.instance.attendence = self.attendence            
         }
     }
+    @Published var selectedConference  : ConferenceItem?          = nil
+    @Published var selectedProposal    : ProposalItem?            = nil
     @State     var update              : Bool                     = false {
         didSet {
             self.conferencesPerMonth.removeAll()
             self.filteredConferences.removeAll()
-            for conference in self.conferences {
+            for conference in self.conferences {                
                 let month : Int = calendar.component(.month, from: conference.date)
                 if !self.conferencesPerMonth.keys.contains(month) {
                     self.conferencesPerMonth[month] = []

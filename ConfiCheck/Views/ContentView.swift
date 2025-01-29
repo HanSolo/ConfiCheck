@@ -168,29 +168,46 @@ struct ContentView: View {
             SpeakerInfoView()
         }
         .sheet(isPresented: $proposalsVisible) {
-            //ProposalsView(proposals: self.proposals)
             ProposalsView()
         }
         .task {
-            let javaConferences : [JavaConference] = await RestController.fetchJavaConferences()
+            loadItemsFromCloudKit()
+            
+            let javaConferences  : [JavaConference] = await RestController.fetchJavaConferences()
+            var conferencesFound : [ConferenceItem] = []
             for javaConference in javaConferences {
                 let conference : ConferenceItem = JavaConference.convertToConferenceItem(javaConference: javaConference)
                 if javaConference.date == nil { continue }
+                conferencesFound.append(conference)
+            }
+            for conference in conferencesFound {
+                if self.model.conferences.contains(where: { $0.id == conference.id }) { continue }
                 self.model.conferences.append(conference)
             }
             self.model.update.toggle()
-            resetAllItems()
-            storeItemsToCloudKit()
+            
+            storeItemsToCloudKit(force: true)
             loadProposalItemsFromCloudKit()
         }
     }
     
     // CloudKit related functions
-    private func storeItemsToCloudKit() -> Void {
+    private func storeItemsToCloudKit(force: Bool) -> Void {
         // Upload Items to CloudKit if not already happened today
         do {
            let lastItemsSaved : Date = Date(timeIntervalSince1970: Properties.instance.lastItemsSaved!)
-            if calendar.component(.day, from: lastItemsSaved) != calendar.component(.day, from: Date.now) {
+            if force {
+                if self.model.conferences.count > 0 {
+                    for conference in self.model.conferences {
+                        context.insert(conference)
+                    }
+                    try context.save()
+                    Properties.instance.lastItemsSaved = Date.now.timeIntervalSince1970
+                    debugPrint("Conferences saved to CloudKit")
+                } else {
+                    debugPrint("No conferences loaded -> not saved")
+                }
+            } else if calendar.component(.day, from: lastItemsSaved) != calendar.component(.day, from: Date.now) {
                 if self.model.conferences.count > 0 {
                     for conference in self.model.conferences {
                         context.insert(conference)
@@ -216,7 +233,7 @@ struct ContentView: View {
         if !conferenceItems.isEmpty {
             if self.model.conferences.isEmpty {
                 for conference in conferenceItems {
-                    self.model.conferences.append(conference)
+                    self.model.conferences.append(conference)                    
                 }
             }
         }
@@ -224,10 +241,11 @@ struct ContentView: View {
         self.model.conferences = self.model.conferences.uniqueElements()
         self.model.update.toggle()
                                         
-        // Remove duplicates if needed
+        /* Remove duplicates if needed
         if conferenceItems.count != self.model.conferences.count {
             removeDuplicatesFromCloudKit()
         }
+        */
     }
     private func removeDuplicatesFromCloudKit() -> Void {
         resetAllItems()

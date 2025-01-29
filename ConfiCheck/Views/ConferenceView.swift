@@ -8,11 +8,13 @@
 import SwiftUI
 import CoreLocation
 
-struct ConferenceView: View {
-    @EnvironmentObject private var model                   : ConfiModel
-    @State             private var conference              : ConferenceItem
-    @State             private var selectedAttendenceIndex : Int = 0
+struct ConferenceView: View, Identifiable {
+    @EnvironmentObject private var model                    : ConfiModel
+    @State             private var conference               : ConferenceItem
+    @State             private var selectedAttendenceIndex  : Int = 0
+    @State             private var proposalSelectionVisible : Bool = false
 
+    var id        : String = UUID().uuidString
     let formatter : DateFormatter
     
     
@@ -157,34 +159,52 @@ struct ConferenceView: View {
                     } label: {}
                 } label: {                    
                     Text("\(Constants.AttendingStatus.getUiStrings()[self.selectedAttendenceIndex])")
-                        .font(.system(size: 14, weight: .light, design: .rounded))
-                        .foregroundStyle(self.selectedAttendenceIndex == 2 ? Constants.GREEN : .secondary)
+                        .font(.system(size: 14, weight: self.selectedAttendenceIndex == 2 ? .medium : .light, design: .rounded))
+                        .foregroundStyle(Constants.AttendingStatus.allCases[self.selectedAttendenceIndex].color)
                 }
             }
             
-            /* Proposals
+            // Proposals
             if self.model.proposals.count > 0 {
-                VStack(alignment: .leading) {
-                    HStack {
-                        Text("Proposals")
-                            .font(.system(size: 14, weight: .light, design: .rounded))
-                        
-                        Spacer()
-                        
-                        Button {
-                            //self.addProposalViewVisible = true
-                        } label: {
-                            Label("", systemImage: "plus.circle")
-                                .padding()
-                                .foregroundStyle(.secondary)
-                                .font(.system(size: 14, weight: .light, design: .rounded))
-                        }
-                        .buttonStyle(.plain)
-                        .foregroundStyle(.primary)
+                HStack {
+                    Text("Proposals")
+                        .font(.system(size: 14, weight: .light, design: .rounded))
+                    
+                    Spacer()
+                                                            
+                    Button {
+                        //let selectedProposal : ProposalItem = self.model.proposals[0]
+                        //self.conference.addProposal(proposal: selectedProposal)
+                        self.model.selectedConference = self.conference
+                        self.proposalSelectionVisible.toggle()
+                    } label: {
+                        Image(systemName: "plus.circle")
+                            .foregroundStyle(.secondary)
+                            .font(.system(size: 16, weight: .light, design: .rounded))
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(.primary)
+                    .popover(isPresented: $proposalSelectionVisible) {
+                        ProposalSelectionView(proposals: self.model.proposals)
+                            .presentationCompactAdaptation(.popover)
                     }
                 }
+                
+                if self.conference.proposals != nil && self.conference.proposals!.count > 0 {
+                    VStack {
+                        ForEach(self.conference.proposals!, id: \.self) { proposal in
+                            ProposedView(proposal: proposal, conference: self.conference)
+                                .alignmentGuide(.listRowSeparatorLeading) { d in
+                                    d[.leading]
+                                }
+                                .alignmentGuide(.listRowSeparatorTrailing) { d in
+                                    d[.trailing]
+                                }
+                        }
+                    }
+                    .scrollContentBackground(.hidden)
+                }                
             }
-            */
         }
         .task {
             if self.model.attendence.keys.contains(where: { $0 == self.conference.id }) {                
@@ -194,6 +214,15 @@ struct ConferenceView: View {
         }
         .onChange(of: self.selectedAttendenceIndex) {
             self.model.attendence[self.conference.id] = self.selectedAttendenceIndex
+        }
+        .onChange(of: self.model.selectedProposal) {
+            if self.model.selectedProposal != nil {
+                if self.conference == self.model.selectedConference {
+                    self.conference.proposals?.append(self.model.selectedProposal!)
+                    self.model.selectedProposal   = nil
+                    self.model.selectedConference = nil
+                }
+            }
         }
     }
 }

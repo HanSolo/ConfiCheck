@@ -13,16 +13,19 @@ final class ProposalItem: Identifiable, Equatable, Hashable {
     var title    : String = ""
     var abstract : String = ""
     var pitch    : String = ""
+    @Relationship(inverse: \ConferenceItem.proposals) var conferences : [ConferenceItem]?
     
     
-    init(title : String, abstract : String, pitch: String) {
-        self.title    = title
-        self.abstract = abstract
-        self.pitch    = pitch
+    init(title : String, abstract : String, pitch: String, conferences: [ConferenceItem]? = []) {
+        self.title       = title
+        self.abstract    = abstract
+        self.pitch       = pitch
+        self.conferences = conferences
     }
     
     var id: String {
-        return "\(title)_\(abstract)"
+        return "\(title)"
+        //return "\(title)_\(abstract)"
     }
     
     func hash(into hasher: inout Hasher) {

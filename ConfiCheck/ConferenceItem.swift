@@ -9,7 +9,7 @@ import Foundation
 import SwiftData
 
 @Model
-final class ConferenceItem: Identifiable, Equatable, Hashable {
+final class ConferenceItem: Identifiable, Equatable, Hashable, ObservableObject {    
     var name           : String  = ""
     var location       : String  = ""
     var city           : String  = ""
@@ -21,22 +21,51 @@ final class ConferenceItem: Identifiable, Equatable, Hashable {
     var cfpDate        : String?
     var lat            : Double?
     var lon            : Double?
+    var proposals      : [ProposalItem]?
+    var proposalStates : [String:String]?
     
     
-    init(name: String, location: String, city: String, country: String, url: String, date: Date, type: String, cfpUrl: String? = "", cfpDate: String? = "", lat: Double? = 0.0, lon: Double? = 0.0) {
-        self.name      = name
-        self.location  = location
-        self.city      = city
-        self.country   = country
-        self.url       = url
-        self.date      = date
-        self.type      = type
-        self.cfpUrl    = cfpUrl!
-        self.cfpDate   = cfpDate!
-        self.lat       = lat!
-        self.lon       = lon!
+    init(name: String, location: String, city: String, country: String, url: String, date: Date, type: String, cfpUrl: String? = "", cfpDate: String? = "", lat: Double? = 0.0, lon: Double? = 0.0, proposals: [ProposalItem]? = [], proposalStates: [String:String]? = [:]) {
+        self.name           = name
+        self.location       = location
+        self.city           = city
+        self.country        = country
+        self.url            = url
+        self.date           = date
+        self.type           = type
+        self.cfpUrl         = cfpUrl!
+        self.cfpDate        = cfpDate!
+        self.lat            = lat!
+        self.lon            = lon!
+        self.proposals      = proposals!
+        self.proposalStates = proposalStates!
     }
         
+    
+    public func addProposal(proposal: ProposalItem) -> Void {
+        if self.proposals == nil { self.proposals = [] }
+        if !self.proposals!.contains(where: { $0.title == proposal.title }) {
+            self.proposals!.append(proposal)            
+            if self.proposalStates == nil { self.proposalStates = [:] }
+            self.proposalStates![proposal.id] = Constants.ProposalStatus.notSubmitted.apiString            
+        }        
+    }
+    public func removeProposal(proposal: ProposalItem) -> Void {
+        if self.proposals == nil { return }
+        if !self.proposals!.contains(where: { $0.title == proposal.title }) {
+            self.proposals!.removeAll(where: { $0.title == proposal.title })
+            if self.proposalStates == nil { return }
+            if self.proposalStates!.keys.contains(proposal.id) {
+                self.proposalStates!.removeValue(forKey: proposal.id)
+            }
+        }
+    }
+    
+    public func toString() -> String {
+        return "\(name) -> proposals: \(self.proposals?.count ?? -1)"
+    }
+    
+    
     var id: String {
         return "\(name)_\(url)"
     }

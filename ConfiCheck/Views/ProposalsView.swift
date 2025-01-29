@@ -29,7 +29,6 @@ struct ProposalsView: View {
                         Button("Add") {
                             self.addProposalViewVisible = true
                         }
-                        .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
                         .buttonStyle(.bordered)
                         .foregroundStyle(.primary)
                         
@@ -38,10 +37,10 @@ struct ProposalsView: View {
                         Button("Close") {
                             dismiss()
                         }
-                        .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
                         .buttonStyle(.bordered)
                         .foregroundStyle(.primary)
                     }
+                    .padding(EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20))
                     
                     HStack {
                         Spacer()

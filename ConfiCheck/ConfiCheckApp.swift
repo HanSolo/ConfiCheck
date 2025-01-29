@@ -21,7 +21,7 @@ struct ConfiCheckApp: App {
          do {
              let configuration : ModelConfiguration = ModelConfiguration(Constants.CONTAINER_ID)
              let schema        : Schema             = Schema([ConferenceItem.self, ProposalItem.self])
-             let container     : ModelContainer     = try ModelContainer(for: schema, configurations: [configuration])
+             let container     : ModelContainer     = try ModelContainer(for: schema, configurations: [configuration])             
              return container
          } catch {
              print("Error creating ConfiCheck container: \(error)")
