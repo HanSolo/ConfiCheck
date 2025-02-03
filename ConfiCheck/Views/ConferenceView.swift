@@ -188,21 +188,7 @@ struct ConferenceView: View, Identifiable {
                     }
                 }
                 
-                if self.conference.proposals != nil && self.conference.proposals!.count > 0 {
-                    /*
-                    VStack {
-                        ForEach(self.conference.proposals!, id: \.self) { proposal in
-                            ProposedView(proposal: proposal, conference: self.conference)
-                                .alignmentGuide(.listRowSeparatorLeading) { d in
-                                    d[.leading]
-                                }
-                                .alignmentGuide(.listRowSeparatorTrailing) { d in
-                                    d[.trailing]
-                                }
-                        }
-                    }
-                    .scrollContentBackground(.hidden)
-                    */
+                if self.conference.proposals != nil && self.conference.proposals!.count > 0 {                    
                     List{
                         ForEach(self.conference.proposals!, id: \.self) { proposal in
                             ProposedView(proposal: proposal, conference: self.conference)
