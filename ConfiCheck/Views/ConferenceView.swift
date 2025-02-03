@@ -232,7 +232,7 @@ struct ConferenceView: View, Identifiable {
     }
     
     func deleteProposalFromConference(at offsets: IndexSet) {
-        self.conference.proposals!.remove(atOffsets: offsets)
+        self.conference.removeProposal(proposal: self.conference.proposals![offsets.first!])
     }
 }
 
