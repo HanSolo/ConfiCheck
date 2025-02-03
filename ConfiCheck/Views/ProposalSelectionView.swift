@@ -34,14 +34,15 @@ struct ProposalSelectionView: View {
             }
             .navigationTitle("Proposal Selection")
             .toolbar(content: {
-                Button("Close") {
-                    //debugPrint("selected proposal: \(selection?.title ?? "none")")
-                    self.model.selectedProposal = self.selection
-                    dismiss()
+                ToolbarItem(placement: .bottomBar) {
+                    Button("Add") {
+                        self.model.selectedProposal = self.selection
+                        dismiss()
+                    }
+                    .padding()
+                    .buttonStyle(.bordered)
+                    .foregroundStyle(.primary)
                 }
-                .padding()
-                .buttonStyle(.bordered)
-                .foregroundStyle(.primary)
             })
         }
     }

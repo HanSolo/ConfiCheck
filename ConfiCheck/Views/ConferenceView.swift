@@ -9,6 +9,7 @@ import SwiftUI
 import CoreLocation
 
 struct ConferenceView: View, Identifiable {
+    @Environment(\.defaultMinListRowHeight) var minRowHeight
     @EnvironmentObject private var model                    : ConfiModel
     @State             private var conference               : ConferenceItem
     @State             private var selectedAttendenceIndex  : Int = 0
@@ -173,8 +174,6 @@ struct ConferenceView: View, Identifiable {
                     Spacer()
                                                             
                     Button {
-                        //let selectedProposal : ProposalItem = self.model.proposals[0]
-                        //self.conference.addProposal(proposal: selectedProposal)
                         self.model.selectedConference = self.conference
                         self.proposalSelectionVisible.toggle()
                     } label: {
@@ -186,11 +185,11 @@ struct ConferenceView: View, Identifiable {
                     .foregroundStyle(.primary)
                     .popover(isPresented: $proposalSelectionVisible) {
                         ProposalSelectionView(proposals: self.model.proposals)
-                            .presentationCompactAdaptation(.popover)
                     }
                 }
                 
                 if self.conference.proposals != nil && self.conference.proposals!.count > 0 {
+                    /*
                     VStack {
                         ForEach(self.conference.proposals!, id: \.self) { proposal in
                             ProposedView(proposal: proposal, conference: self.conference)
@@ -203,7 +202,27 @@ struct ConferenceView: View, Identifiable {
                         }
                     }
                     .scrollContentBackground(.hidden)
-                }                
+                    */
+                    List{
+                        ForEach(self.conference.proposals!, id: \.self) { proposal in
+                            ProposedView(proposal: proposal, conference: self.conference)
+                                .alignmentGuide(.listRowSeparatorLeading) { d in
+                                    d[.leading]
+                                }
+                                .alignmentGuide(.listRowSeparatorTrailing) { d in
+                                    d[.trailing]
+                                }
+                                .listRowInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
+                                .listRowSpacing(0)
+                                .listRowBackground(Color.clear)
+                        }
+                        .onDelete(perform: deleteProposalFromConference)
+                    }
+                    .frame(minHeight: minRowHeight * CGFloat(self.conference.proposals!.count))
+                    .scrollContentBackground(.hidden)
+                    .listRowSpacing(0)
+                    .listStyle(.plain)
+                }
             }
         }
         .task {
@@ -224,6 +243,10 @@ struct ConferenceView: View, Identifiable {
                 }
             }
         }
+    }
+    
+    func deleteProposalFromConference(at offsets: IndexSet) {
+        self.conference.proposals!.remove(atOffsets: offsets)
     }
 }
 

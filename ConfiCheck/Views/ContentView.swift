@@ -81,8 +81,6 @@ struct ContentView: View {
                     }
                 }
                 .listStyle(.sidebar)
-                //.background(Color(.systemGray2))
-                //.accentColor(Color(.systemPurple))
                 .scrollContentBackground(.hidden)
                 .onAppear {
                     self.isExpanded.insert(calendar.component(.month, from: Date.now))
