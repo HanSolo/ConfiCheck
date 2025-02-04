@@ -16,6 +16,7 @@ struct ContentView: View {
     @State                       private var filter             : Int           = 0
     @State                       private var speakerInfoVisible : Bool          = false
     @State                       private var proposalsVisible   : Bool          = false
+    @State                       private var updating           : Bool          = false
     private let formatter                                       : DateFormatter = DateFormatter()
     private let calendar                                        : Calendar      = .current
     
@@ -84,6 +85,9 @@ struct ContentView: View {
                 .scrollContentBackground(.hidden)
                 .onAppear {
                     self.isExpanded.insert(calendar.component(.month, from: Date.now))
+                }
+                .refreshable {
+                    updateAll()
                 }
             } else {
                 Spacer()
@@ -169,6 +173,14 @@ struct ContentView: View {
             ProposalsView()
         }
         .task {
+            updateAll()
+        }
+    }
+    
+    // Update all data
+    @MainActor
+    private func updateAll() -> Void {
+        Task {
             loadItemsFromCloudKit()
             
             let javaConferences  : [JavaConference] = await RestController.fetchJavaConferences()

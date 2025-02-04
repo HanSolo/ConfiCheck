@@ -31,10 +31,11 @@ class ProfileModel: ObservableObject {
             guard let uiImage = UIImage(data: data) else {
                 throw TransferError.importFailed
             }
-        
+            
             Helper.saveProfileImage(image: uiImage)
                 
             let image = Image(uiImage: uiImage)
+                debugPrint("Image created from UIImage in ProfileModel")
                 return ProfileImage(image: image)
             }
         }

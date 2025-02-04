@@ -18,8 +18,16 @@ struct SpeakerInfoView: View {
     @State                       private var speakerBlueSky    : String       = Properties.instance.speakerBlueSky!
     @State                       private var speakerBio        : String       = Properties.instance.speakerBio!
     @State                       private var speakerExperience : String       = Properties.instance.speakerExperience!
-    @State                       private var profileUIImage    : UIImage?
-    @State                       private var profileImage      : Image?
+    @State                       private var profileUIImage    : UIImage? {
+        didSet {
+            debugPrint("Profile uiimage set")
+        }
+    }
+    @State                       private var profileImage      : Image? {
+        didSet {
+            debugPrint("Profile image set")
+        }
+    }
     @State                       private var showNotice        : Bool         = false
     
     
@@ -217,6 +225,8 @@ struct SpeakerInfoView: View {
                 self.profileUIImage       = profileUIImage!
                 self.profileImage         = Image(uiImage: profileUIImage!)
                 self.viewModel.imageState = .success(profileImage!)
+            } else {
+                debugPrint("profileImage == nil")
             }
         }
         .onDisappear {

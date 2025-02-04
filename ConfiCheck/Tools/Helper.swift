@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import PhotosUI
 
 
 public struct Helper {
@@ -171,14 +172,14 @@ public struct Helper {
                     var isStale : Bool = false
                     do {
                         let resolvedUrl = try URL(resolvingBookmarkData: imgBookmark, options: [.withoutUI], bookmarkDataIsStale: &isStale)
-                        
+                        //debugPrint(resolvedUrl.path)
                         do {
                             try fileManager.setAttributes([.protectionKey: FileProtectionType.none], ofItemAtPath: resolvedUrl.path)
+                            //debugPrint("Successfully set file protection")
                         } catch {
-                            //debugPrint("Failed to set file protection. Error: \(error.localizedDescription)")
+                            debugPrint("Failed to set file protection. Error: \(error.localizedDescription)")
                         }
-                        
-                        if resolvedUrl.startAccessingSecurityScopedResource() {
+                        //if resolvedUrl.startAccessingSecurityScopedResource() {
                             do {
                                 try data.write(to: resolvedUrl, options: [.atomic, .noFileProtection])
                                 //debugPrint("Successfully saved img file via imgBookmark")
@@ -188,20 +189,21 @@ public struct Helper {
                                     //debugPrint("Successfully saved img bookmark to properties")
                                 }
                             } catch {
-                                //debugPrint("Error saving img file. Error: \(error.localizedDescription)")
+                                debugPrint("Error saving img file. Error: \(error.localizedDescription)")
                             }
-                        }
+                        //}
                         do { resolvedUrl.stopAccessingSecurityScopedResource() }
                     } catch let error {
-                        //debugPrint("Error resolving URL from bookmark data. Error: \(error.localizedDescription)")
+                        debugPrint("Error resolving URL from bookmark data. Error: \(error.localizedDescription)")
                                                                 
                         let url : URL = FileManager.documentsDirectory.appendingPathComponent(Constants.PROFILE_IMAGE_NAME)
                         //let url : URL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: Constants.APP_GROUP_ID)!.appendingPathComponent(Constants.PROFILE_IMAGE_NAME)
                         
                         do {
                             try fileManager.setAttributes([.protectionKey: FileProtectionType.none], ofItemAtPath: url.path)
+                            //debugPrint("Successfully set file protection")
                         } catch {
-                            //debugPrint("Failed to set file protection. Error: \(error.localizedDescription)")
+                            debugPrint("Failed to set file protection. Error: \(error.localizedDescription)")
                         }
                         
                         do {
@@ -213,7 +215,7 @@ public struct Helper {
                                 //debugPrint("Successfully saved img bookmark to properties")
                             }
                         } catch {
-                            //debugPrint("Error saving img file. Error: \(error.localizedDescription)")
+                            debugPrint("Error saving img file. Error: \(error.localizedDescription)")
                         }
                     }
                 } else {
@@ -222,8 +224,9 @@ public struct Helper {
                     
                     do {
                         try fileManager.setAttributes([.protectionKey: FileProtectionType.none], ofItemAtPath: url.path)
+                        //debugPrint("Suceessfully set file protection")
                     } catch {
-                        //debugPrint("Failed to set file protection. Error: \(error.localizedDescription)")
+                        debugPrint("Failed to set file protection. Error: \(error.localizedDescription)")
                     }
                     
                     do {
@@ -235,11 +238,11 @@ public struct Helper {
                             //debugPrint("Successfully saved img bookmark to properties")
                         }
                     } catch {
-                        //debugPrint("Error saving img file. Error: \(error.localizedDescription)")
+                        debugPrint("Error saving img file. Error: \(error.localizedDescription)")
                     }
                 }
             } else {
-                //debugPrint("Error decoding image data")
+                debugPrint("Error decoding image data")
             }
         }
     }
@@ -256,7 +259,7 @@ public struct Helper {
                 do {
                     try fileManager.setAttributes([.protectionKey: FileProtectionType.none], ofItemAtPath: resolvedUrl.path)
                 } catch {
-                    //debugPrint("Failed to set file protection. Error: \(error.localizedDescription)")
+                    debugPrint("Failed to set file protection. Error: \(error.localizedDescription)")
                 }
                 
                 if resolvedUrl.startAccessingSecurityScopedResource() {
@@ -264,12 +267,12 @@ public struct Helper {
                     if uiImage != nil {
                         image = Image(uiImage: uiImage!)
                     } else {
-                        //debugPrint("Error reading img file from resolvedUrl")
+                        debugPrint("Error reading img file from resolvedUrl")
                     }
                 }
                 do { resolvedUrl.stopAccessingSecurityScopedResource() }
             } catch let error {
-                //debugPrint("Error resolving URL from bookmark data. Error: \(error.localizedDescription)")
+                debugPrint("Error resolving URL from bookmark data. Error: \(error.localizedDescription)")
             }
         } else {
             let url : URL = FileManager.documentsDirectory.appendingPathComponent(Constants.PROFILE_IMAGE_NAME)
@@ -278,14 +281,14 @@ public struct Helper {
             do {
                 try fileManager.setAttributes([.protectionKey: FileProtectionType.none], ofItemAtPath: url.path)
             } catch {
-                //debugPrint("Failed to set file protection. Error: \(error.localizedDescription)")
+                debugPrint("Failed to set file protection. Error: \(error.localizedDescription)")
             }
             
             let uiImage : UIImage? = UIImage(contentsOfFile: url.path())
             if uiImage != nil {
                 image = Image(uiImage: uiImage!)
             } else {
-                //debugPrint("Error reading img file")
+                debugPrint("Error reading img file")
             }
         }
         return image
@@ -294,7 +297,15 @@ public struct Helper {
     public static func loadProfileUIImage() -> UIImage? {
         let fileManager : FileManager = FileManager.default
         var image       : UIImage?
-                
+          
+        /*
+        PHPhotoLibrary.requestAuthorization(for: .readWrite) { [unowned self] (status) in
+            DispatchQueue.main.async { [unowned self] in
+                showUI(for: status)
+            }
+        }
+        */
+        
         if let imgBookmark = Data(base64Encoded: Properties.instance.imgBookmark!.data(using: .utf8)!) {
             var isStale : Bool = false
             do {
@@ -309,7 +320,8 @@ public struct Helper {
                 if resolvedUrl.startAccessingSecurityScopedResource() {
                     let uiImage : UIImage? = UIImage(contentsOfFile: resolvedUrl.path())
                     if uiImage != nil {
-                        image = uiImage!
+                        return uiImage!
+                        //image = uiImage!
                     } else {
                         //debugPrint("Error reading img file from resolvedUrl")
                     }
