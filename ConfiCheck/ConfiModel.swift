@@ -13,7 +13,11 @@ import SwiftUI
 public class ConfiModel: ObservableObject {
     @Published var networkMonitor          : NetworkMonitor           = NetworkMonitor()
     @Published var conferences             : [ConferenceItem]         = []
-    @Published var conferencesPerMonth     : [Int : [ConferenceItem]] = [:]
+    @Published var conferencesPerMonth     : [Int : [ConferenceItem]] = [:] {
+        didSet {
+            
+        }
+    }
     @Published var conferencesPerContinent : [Int : [ConferenceItem]] = [:]
     @Published var filteredConferences     : [Int : [ConferenceItem]] = [:]
     @Published var proposals               : [ProposalItem]           = []

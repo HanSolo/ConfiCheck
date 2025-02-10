@@ -6,8 +6,42 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		4F924ED72D59F33000369489 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F924ED62D59F33000369489 /* WidgetKit.framework */; };
+		4F924ED92D59F33000369489 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4F924ED82D59F33000369489 /* SwiftUI.framework */; };
+		4F924EE62D59F33100369489 /* ConfiCheckWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 4F924ED42D59F33000369489 /* ConfiCheckWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4F924EE42D59F33100369489 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 4F7506392D380B0F00F457A1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 4F924ED32D59F33000369489;
+			remoteInfo = ConfiCheckWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		4F924EE72D59F33100369489 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				4F924EE62D59F33100369489 /* ConfiCheckWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		4F7506412D380B0F00F457A1 /* ConfiCheck.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ConfiCheck.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		4F924ED42D59F33000369489 /* ConfiCheckWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ConfiCheckWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		4F924ED62D59F33000369489 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		4F924ED82D59F33000369489 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		4F924EEC2D59F36A00369489 /* ConfiCheckWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = ConfiCheckWidgetExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -18,6 +52,47 @@
 			);
 			target = 4F7506402D380B0F00F457A1 /* ConfiCheck */;
 		};
+		4F924EEB2D59F33100369489 /* Exceptions for "ConfiCheckWidget" folder in "ConfiCheckWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 4F924ED32D59F33000369489 /* ConfiCheckWidgetExtension */;
+		};
+		4F924EEE2D59F3DC00369489 /* Exceptions for "ConfiCheck" folder in "ConfiCheckWidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				ConfData/DeveloperEvent.swift,
+				ConfData/JavaConference.swift,
+				ConferenceItem.swift,
+				ConfiModel.swift,
+				Constants.swift,
+				"Extensions/Array+UniqueElements.swift",
+				"Extensions/Color+components.swift",
+				"Extensions/Date+DayBeforeAfter.swift",
+				"Extensions/DateFormatter+ISO8691.swift",
+				"Extensions/FileManager+documentsDirectory.swift",
+				"Extensions/Notification+Name.swift",
+				"Extensions/String+localized.swift",
+				ProfileModel.swift,
+				ProposalItem.swift,
+				Tools/Conference.swift,
+				Tools/Country.swift,
+				Tools/Helper.swift,
+				Tools/IsoCountryCodes.swift,
+				Tools/IsoCountryInfo.swift,
+				Tools/JsonData.swift,
+				Tools/NetworkMonitor.swift,
+				Tools/RestController.swift,
+				UserDefaults/ObjectSaveable.swift,
+				UserDefaults/ObjectSaveableError.swift,
+				UserDefaults/Observable.swift,
+				UserDefaults/Properties.swift,
+				UserDefaults/UserDefault.swift,
+				UserDefaults/UserDefaultsObservation.swift,
+			);
+			target = 4F924ED32D59F33000369489 /* ConfiCheckWidgetExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -25,8 +100,17 @@
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				4F7506512D380B1000F457A1 /* Exceptions for "ConfiCheck" folder in "ConfiCheck" target */,
+				4F924EEE2D59F3DC00369489 /* Exceptions for "ConfiCheck" folder in "ConfiCheckWidgetExtension" target */,
 			);
 			path = ConfiCheck;
+			sourceTree = "<group>";
+		};
+		4F924EDA2D59F33000369489 /* ConfiCheckWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				4F924EEB2D59F33100369489 /* Exceptions for "ConfiCheckWidget" folder in "ConfiCheckWidgetExtension" target */,
+			);
+			path = ConfiCheckWidget;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -39,13 +123,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4F924ED12D59F33000369489 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4F924ED92D59F33000369489 /* SwiftUI.framework in Frameworks */,
+				4F924ED72D59F33000369489 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		4F7506382D380B0F00F457A1 = {
 			isa = PBXGroup;
 			children = (
+				4F924EEC2D59F36A00369489 /* ConfiCheckWidgetExtension.entitlements */,
 				4F7506432D380B0F00F457A1 /* ConfiCheck */,
+				4F924EDA2D59F33000369489 /* ConfiCheckWidget */,
+				4F924ED52D59F33000369489 /* Frameworks */,
 				4F7506422D380B0F00F457A1 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -54,8 +150,18 @@
 			isa = PBXGroup;
 			children = (
 				4F7506412D380B0F00F457A1 /* ConfiCheck.app */,
+				4F924ED42D59F33000369489 /* ConfiCheckWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		4F924ED52D59F33000369489 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				4F924ED62D59F33000369489 /* WidgetKit.framework */,
+				4F924ED82D59F33000369489 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -68,10 +174,12 @@
 				4F75063D2D380B0F00F457A1 /* Sources */,
 				4F75063E2D380B0F00F457A1 /* Frameworks */,
 				4F75063F2D380B0F00F457A1 /* Resources */,
+				4F924EE72D59F33100369489 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				4F924EE52D59F33100369489 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				4F7506432D380B0F00F457A1 /* ConfiCheck */,
@@ -82,6 +190,28 @@
 			productName = ConfiCheck;
 			productReference = 4F7506412D380B0F00F457A1 /* ConfiCheck.app */;
 			productType = "com.apple.product-type.application";
+		};
+		4F924ED32D59F33000369489 /* ConfiCheckWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 4F924EEA2D59F33100369489 /* Build configuration list for PBXNativeTarget "ConfiCheckWidgetExtension" */;
+			buildPhases = (
+				4F924ED02D59F33000369489 /* Sources */,
+				4F924ED12D59F33000369489 /* Frameworks */,
+				4F924ED22D59F33000369489 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				4F924EDA2D59F33000369489 /* ConfiCheckWidget */,
+			);
+			name = ConfiCheckWidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = ConfiCheckWidgetExtension;
+			productReference = 4F924ED42D59F33000369489 /* ConfiCheckWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -94,6 +224,9 @@
 				LastUpgradeCheck = 1620;
 				TargetAttributes = {
 					4F7506402D380B0F00F457A1 = {
+						CreatedOnToolsVersion = 16.2;
+					};
+					4F924ED32D59F33000369489 = {
 						CreatedOnToolsVersion = 16.2;
 					};
 				};
@@ -113,12 +246,20 @@
 			projectRoot = "";
 			targets = (
 				4F7506402D380B0F00F457A1 /* ConfiCheck */,
+				4F924ED32D59F33000369489 /* ConfiCheckWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		4F75063F2D380B0F00F457A1 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		4F924ED22D59F33000369489 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -135,7 +276,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		4F924ED02D59F33000369489 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4F924EE52D59F33100369489 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 4F924ED32D59F33000369489 /* ConfiCheckWidgetExtension */;
+			targetProxy = 4F924EE42D59F33100369489 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		4F7506532D380B1000F457A1 /* Debug */ = {
@@ -145,7 +301,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ConfiCheck/ConfiCheck.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 31;
+				CURRENT_PROJECT_VERSION = 33;
 				DEVELOPMENT_ASSET_PATHS = "\"ConfiCheck/Preview Content\"";
 				DEVELOPMENT_TEAM = L4A7549EHC;
 				ENABLE_PREVIEWS = YES;
@@ -166,7 +322,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 18.0.1;
+				MARKETING_VERSION = 18.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = eu.hansolo.ConfiCheck;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -186,7 +342,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ConfiCheck/ConfiCheck.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 31;
+				CURRENT_PROJECT_VERSION = 33;
 				DEVELOPMENT_ASSET_PATHS = "\"ConfiCheck/Preview Content\"";
 				DEVELOPMENT_TEAM = L4A7549EHC;
 				ENABLE_PREVIEWS = YES;
@@ -207,7 +363,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 18.0.1;
+				MARKETING_VERSION = 18.0.3;
 				PRODUCT_BUNDLE_IDENTIFIER = eu.hansolo.ConfiCheck;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -339,6 +495,70 @@
 			};
 			name = Release;
 		};
+		4F924EE82D59F33100369489 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = ConfiCheckWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 33;
+				DEVELOPMENT_TEAM = L4A7549EHC;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ConfiCheckWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ConfiCheckWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 18.0.3;
+				PRODUCT_BUNDLE_IDENTIFIER = eu.hansolo.ConfiCheck.ConfiCheckWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		4F924EE92D59F33100369489 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = ConfiCheckWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 33;
+				DEVELOPMENT_TEAM = L4A7549EHC;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = ConfiCheckWidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = ConfiCheckWidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 18.0.3;
+				PRODUCT_BUNDLE_IDENTIFIER = eu.hansolo.ConfiCheck.ConfiCheckWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -356,6 +576,15 @@
 			buildConfigurations = (
 				4F7506532D380B1000F457A1 /* Debug */,
 				4F7506542D380B1000F457A1 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		4F924EEA2D59F33100369489 /* Build configuration list for PBXNativeTarget "ConfiCheckWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				4F924EE82D59F33100369489 /* Debug */,
+				4F924EE92D59F33100369489 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

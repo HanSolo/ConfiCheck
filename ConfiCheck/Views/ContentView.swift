@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import WidgetKit
 
 
 struct ContentView: View {
@@ -32,6 +33,7 @@ struct ContentView: View {
             Text("Conferences")
                 .font(.system(size: 24, weight: .medium, design: .rounded))
                 .foregroundStyle(.primary)
+            
             HStack {
                 Text("Continents")
                     .font(.system(size: 16, weight: .regular, design: .rounded))
@@ -333,6 +335,10 @@ struct ContentView: View {
             updateList()
             storeItemsToCloudKit(force: true)
             loadProposalItemsFromCloudKit()
+            
+            Helper.storeConferencesThisMonthToUserDefaults(conferencesPerMonth: self.model.conferencesPerMonth, attendence: self.model.attendence)
+            
+            WidgetCenter.shared.reloadAllTimelines()
         }
     }
     

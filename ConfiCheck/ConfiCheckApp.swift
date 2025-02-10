@@ -59,7 +59,7 @@ struct ConfiCheckApp: App {
                         }
                         self.model.update.toggle()
                         
-                        //WidgetCenter.shared.reloadTimelines(ofKind: Constants.WIDGET_KIND)
+                        Helper.storeConferencesThisMonthToUserDefaults(conferencesPerMonth: self.model.conferencesPerMonth, attendence: self.model.attendence)                        
                         WidgetCenter.shared.reloadAllTimelines()
                         
                         debugPrint("App refresh in background successful")

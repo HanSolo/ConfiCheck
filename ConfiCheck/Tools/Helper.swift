@@ -14,7 +14,7 @@ public struct Helper {
     private static var calendar : Calendar = .current
     
     
-    public static func getDatesFromJavaConferenceDate(date: String) -> (Date?,Date?) {        
+    public static func getDatesFromJavaConferenceDate(date: String) -> (Date?,Date?) {
         if let result = try? Constants.JAVA_CONFERENCE_DATE_REGEX.wholeMatch(in: date) {
             if result.1 != nil {
                 let day1   : Int = Int(result.2!)!
@@ -63,22 +63,22 @@ public struct Helper {
         }
         return (nil,nil)
     }
-        
+    
     public static func getMonthFromName(month: String) -> Int {
         switch month {
-            case "january", "jan"   : return 1
-            case "february", "feb"  : return 2
-            case "march", "mar"     : return 3
-            case "april", "apr"     : return 4
-            case "may"              : return 5
-            case "june", "jun"      : return 6
-            case "july", "jul"      : return 7
-            case "august", "aug"    : return 8
-            case "september", "sep" : return 9
-            case "october", "oct"   : return 10
-            case "november", "nov"  : return 11
-            case "december", "dec"  : return 12
-            default                 : return -1
+        case "january", "jan"   : return 1
+        case "february", "feb"  : return 2
+        case "march", "mar"     : return 3
+        case "april", "apr"     : return 4
+        case "may"              : return 5
+        case "june", "jun"      : return 6
+        case "july", "jul"      : return 7
+        case "august", "aug"    : return 8
+        case "september", "sep" : return 9
+        case "october", "oct"   : return 10
+        case "november", "nov"  : return 11
+        case "december", "dec"  : return 12
+        default                 : return -1
         }
     }
     
@@ -94,13 +94,13 @@ public struct Helper {
         return "\(formatter.string(from: dates.0!))\(dates.1 != nil ? " - " : "")\(dates.1 != nil ? formatter.string(from:dates.1!) : "")"
     }
     
-    public static func getLocationFromEventItem(text: String) -> String {        
+    public static func getLocationFromEventItem(text: String) -> String {
         if let result = try? Constants.EVENT_ITEM_LOCATION_REGEX.wholeMatch(in: text) {
             return String(result.2)
         }
         return ""
     }
-
+    
     public static func getCityFromEventItem(text: String) -> String {
         if text.isEmpty { return "" }
         let token : [String] = text.components(separatedBy: Constants.CITY_DELIMITER)
@@ -127,7 +127,7 @@ public struct Helper {
         }
         return Date(timeIntervalSince1970: 0)
     }
-
+    
     public static func getColorForCfpDate(date: Date) -> Color {
         let now : Date = Date.now
         let diffs = calendar.dateComponents([.year, .month, .day], from: now, to: date)
@@ -142,7 +142,7 @@ public struct Helper {
             return Constants.ORANGE
         } else if diffs.month! == 0 && diffs.day! <= 7 {
             return Constants.RED
-        } else {            
+        } else {
             return Constants.GREEN
         }
     }
@@ -180,22 +180,22 @@ public struct Helper {
                             debugPrint("Failed to set file protection. Error: \(error.localizedDescription)")
                         }
                         //if resolvedUrl.startAccessingSecurityScopedResource() {
-                            do {
-                                try data.write(to: resolvedUrl, options: [.atomic, .noFileProtection])
-                                //debugPrint("Successfully saved img file via imgBookmark")
-                                
-                                if let bookmark = try? resolvedUrl.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil) {
-                                    Properties.instance.imgBookmark = bookmark.base64EncodedString()
-                                    //debugPrint("Successfully saved img bookmark to properties")
-                                }
-                            } catch {
-                                debugPrint("Error saving img file. Error: \(error.localizedDescription)")
+                        do {
+                            try data.write(to: resolvedUrl, options: [.atomic, .noFileProtection])
+                            //debugPrint("Successfully saved img file via imgBookmark")
+                            
+                            if let bookmark = try? resolvedUrl.bookmarkData(options: .minimalBookmark, includingResourceValuesForKeys: nil, relativeTo: nil) {
+                                Properties.instance.imgBookmark = bookmark.base64EncodedString()
+                                //debugPrint("Successfully saved img bookmark to properties")
                             }
+                        } catch {
+                            debugPrint("Error saving img file. Error: \(error.localizedDescription)")
+                        }
                         //}
                         do { resolvedUrl.stopAccessingSecurityScopedResource() }
                     } catch let error {
                         debugPrint("Error resolving URL from bookmark data. Error: \(error.localizedDescription)")
-                                                                
+                        
                         let url : URL = FileManager.documentsDirectory.appendingPathComponent(Constants.PROFILE_IMAGE_NAME)
                         //let url : URL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: Constants.APP_GROUP_ID)!.appendingPathComponent(Constants.PROFILE_IMAGE_NAME)
                         
@@ -250,7 +250,7 @@ public struct Helper {
     public static func loadProfileImage() -> Image? {
         let fileManager : FileManager = FileManager.default
         var image       : Image?
-                
+        
         if let imgBookmark = Data(base64Encoded: Properties.instance.imgBookmark!.data(using: .utf8)!) {
             var isStale : Bool = false
             do {
@@ -297,14 +297,14 @@ public struct Helper {
     public static func loadProfileUIImage() -> UIImage? {
         let fileManager : FileManager = FileManager.default
         var image       : UIImage?
-          
+        
         /*
-        PHPhotoLibrary.requestAuthorization(for: .readWrite) { [unowned self] (status) in
-            DispatchQueue.main.async { [unowned self] in
-                showUI(for: status)
-            }
-        }
-        */
+         PHPhotoLibrary.requestAuthorization(for: .readWrite) { [unowned self] (status) in
+         DispatchQueue.main.async { [unowned self] in
+         showUI(for: status)
+         }
+         }
+         */
         
         if let imgBookmark = Data(base64Encoded: Properties.instance.imgBookmark!.data(using: .utf8)!) {
             var isStale : Bool = false
@@ -327,7 +327,7 @@ public struct Helper {
                     }
                 }
                 do { resolvedUrl.stopAccessingSecurityScopedResource() }
-            } catch let error {
+            } catch _ {
                 //debugPrint("Error resolving URL from bookmark data. Error: \(error.localizedDescription)")
             }
         } else {
@@ -348,5 +348,41 @@ public struct Helper {
             }
         }
         return image
+    }
+    
+    static func conferencesToJson(conferences: [ConferenceItem]) -> String {
+        var jsonTxt : String = "["
+        for conference in conferences {
+            jsonTxt += "{\"name\":\"\(conference.name)\",\"date\":\(conference.date.timeIntervalSince1970),\"country\":\"\(conference.country)\"},"
+        }
+        if conferences.count > 0 { jsonTxt.removeLast() }
+        jsonTxt += "]"
+        return jsonTxt
+    }
+    
+    static func storeConferencesThisMonthToUserDefaults(conferencesPerMonth : [Int : [ConferenceItem]], attendence: [String : Int]) -> Void {
+        let currentMonth : Int              = Calendar.current.component(.month, from: Date())
+        var conferences  : [ConferenceItem] = []
+        for conference in conferencesPerMonth[currentMonth] ?? [] {
+            if attendence.keys.contains(where: { $0 == conference.id }) {
+                if attendence[conference.id] != 2 { continue }
+                conferences.append(conference)
+            }
+        }
+        let jsonTxt : String = conferencesToJson(conferences: conferences)
+        let jsonData = jsonTxt.data(using: .utf8)
+        UserDefaults(suiteName: Constants.APP_GROUP_ID)!.set(jsonData, forKey: Constants.CONFERENCES_THIS_MONTH_KEY_UD)
+    }
+    static func readConferencesThisMonthFromUserDefaults() -> [Conference] {
+        var conferences : [Conference] = []
+        let encodedData = UserDefaults(suiteName: Constants.APP_GROUP_ID)!.object(forKey: Constants.CONFERENCES_THIS_MONTH_KEY_UD) as? Data
+        if let jsonEncoded = encodedData {
+            let jsonData : [JsonData] = try! JSONDecoder().decode([JsonData].self, from: jsonEncoded)
+            for jd in jsonData {
+                let conference : Conference? = jd.getConference()
+                if nil != conference { conferences.append(conference!) }
+            }
+        }
+        return conferences
     }
 }
