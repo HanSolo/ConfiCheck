@@ -39,6 +39,7 @@ public struct Constants {
     public static let GREEN                      : Color  = Color(red: 0.000, green: 0.761, blue: 0.004, opacity: 1.00) //   0, 194, 1
     
     
+    // ******************** Enums *********************************************
     public enum ConferenceType {
         case inPerson
         case virtual
@@ -206,6 +207,56 @@ public struct Constants {
         
         public static func getUiStrings() -> [String] {
             return [ ProposalStatus.notSubmitted.uiString, ProposalStatus.submitted.uiString, ProposalStatus.accepted.uiString, ProposalStatus.rejected.uiString ]
+        }
+    }
+    
+    public enum Continent : String, CaseIterable {
+        case all
+        case africa
+        case antarctica
+        case asia
+        case europe
+        case northAmerica
+        case oceania
+        case southAmerica
+        
+        public var code: String {
+            switch self {
+                case .all          : return "ALL"
+                case .africa       : return "AF"
+                case .antarctica   : return "AN"
+                case .asia         : return "AS"
+                case .europe       : return "EU"
+                case .northAmerica : return "NA"
+                case .oceania      : return "OC"
+                case .southAmerica : return "SA"
+            }
+        }
+        
+        public var name: String {
+            switch self {
+                case .all          : return "All Continents"
+                case .africa       : return "Africa"
+                case .antarctica   : return "Antarctica"
+                case .asia         : return "Asia"
+                case .europe       : return "Europe"
+                case .northAmerica : return "North America"
+                case .oceania      : return "Oceania"
+                case .southAmerica : return "South America"
+            }
+        }
+        
+        public var index: Int {
+            switch self {
+                case .all          : return 0
+                case .africa       : return 1
+                case .antarctica   : return 2
+                case .asia         : return 3
+                case .europe       : return 4
+                case .northAmerica : return 5
+                case .oceania      : return 6
+                case .southAmerica : return 7
+            }
         }
     }
 }

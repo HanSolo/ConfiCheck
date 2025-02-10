@@ -20,6 +20,7 @@ extension Key {
     static let speakerExperience    : Key = "speakerExperience"
     static let imgBookmark          : Key = "imgBookmark"
     static let lastItemsSaved       : Key = "lastItemsSaved"
+    static let selectedContinent    : Key = "selectedContinent"
 }
 
 
@@ -52,6 +53,9 @@ public struct Properties {
     
     @UserDefault(key: .lastItemsSaved, defaultValue: 0.0)
     var lastItemsSaved: Double?
+    
+    @UserDefault(key: .selectedContinent, defaultValue: 0)
+    var selectedContinent: Int?
     
     private init() {}
 }
