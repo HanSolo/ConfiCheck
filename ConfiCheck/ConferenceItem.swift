@@ -50,10 +50,12 @@ final class ConferenceItem: Identifiable, Equatable, Hashable, ObservableObject 
             self.proposalStates![proposal.id] = Constants.ProposalStatus.notSubmitted.apiString            
         }        
     }
-    public func removeProposal(proposal: ProposalItem) -> Void {
+    public func removeProposal(proposal: ProposalItem) -> Void {        
         if self.proposals == nil { return }
-        if !self.proposals!.contains(where: { $0.title == proposal.title }) {
-            self.proposals!.removeAll(where: { $0.title == proposal.title })
+        let proposalFound : ProposalItem? = self.proposals!.filter({ $0.title == proposal.title}).first
+        if proposalFound != nil {
+            let indexToRemove : Int = self.proposals!.firstIndex(of: proposalFound!)!
+            self.proposals!.remove(at: indexToRemove)
             if self.proposalStates == nil { return }
             if self.proposalStates!.keys.contains(proposal.id) {
                 self.proposalStates!.removeValue(forKey: proposal.id)

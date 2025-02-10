@@ -52,6 +52,16 @@ struct ProposalsView: View {
                     
                     List {
                         ForEach(filtered, id:\.self) { proposal in
+                            
+                            let numberOfCharactersA : Int      = proposal.abstract.count
+                            let componentsA         : [String] = proposal.abstract.components(separatedBy: .whitespacesAndNewlines)
+                            let numberOfWordsA      : Int      = componentsA.filter { !$0.isEmpty }.count
+                            
+                            let numberOfCharactersP : Int      = proposal.pitch.count
+                            let componentsP         : [String] = proposal.pitch.components(separatedBy: .whitespacesAndNewlines)
+                            let numberOfWordsP      : Int      = componentsP.filter { !$0.isEmpty }.count
+                                                        
+                            
                             HStack {
                                 Button {
                                     pasteBoard.string = collectProposalInfo(proposal: proposal)
@@ -80,7 +90,7 @@ struct ProposalsView: View {
                                     Text(proposal.title)
                                         .font(.system(size: 14, weight: .regular, design: .rounded))
                                         .multilineTextAlignment(.leading)
-                                                                        
+                                    
                                     HStack {
                                         Text("Abstract")
                                             .font(.system(size: 16, weight: .medium, design: .rounded))
@@ -90,6 +100,9 @@ struct ProposalsView: View {
                                     Text(proposal.abstract)
                                         .font(.system(size: 14, weight: .regular, design: .rounded))
                                         .multilineTextAlignment(.leading)
+                                    Text("(\(numberOfCharactersA) characters, \(numberOfWordsA) words)")
+                                        .font(.system(size: 10, weight: .light, design: .rounded))
+                                        .foregroundStyle(.secondary)
                                     
                                     HStack {
                                         Text("Pitch")
@@ -100,6 +113,9 @@ struct ProposalsView: View {
                                     Text(proposal.pitch)
                                         .font(.system(size: 14, weight: .regular, design: .rounded))
                                         .multilineTextAlignment(.leading)
+                                    Text("(\(numberOfCharactersP) characters, \(numberOfWordsP) words)")
+                                        .font(.system(size: 10, weight: .light, design: .rounded))
+                                        .foregroundStyle(.secondary)
                                 }
                             }
                             .listRowBackground(self.colorScheme == .dark ? Color(red: 0.1, green: 0.1, blue: 0.1) : Color(red: 0.9, green: 0.9, blue: 0.9))

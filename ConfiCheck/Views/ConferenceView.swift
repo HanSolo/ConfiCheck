@@ -9,11 +9,12 @@ import SwiftUI
 import CoreLocation
 
 struct ConferenceView: View, Identifiable {
-    @Environment(\.defaultMinListRowHeight) var minRowHeight
-    @EnvironmentObject private var model                    : ConfiModel
-    @State             private var conference               : ConferenceItem
-    @State             private var selectedAttendenceIndex  : Int = 0
-    @State             private var proposalSelectionVisible : Bool = false
+    @Environment(\.defaultMinListRowHeight) private var minRowHeight
+    @Environment(\.modelContext)            private var context
+    @EnvironmentObject                      private var model                    : ConfiModel
+    @State                                  private var conference               : ConferenceItem
+    @State                                  private var selectedAttendenceIndex  : Int = 0
+    @State                                  private var proposalSelectionVisible : Bool = false
 
     var id        : String = UUID().uuidString
     let formatter : DateFormatter
@@ -231,7 +232,7 @@ struct ConferenceView: View, Identifiable {
         }
     }
     
-    func deleteProposalFromConference(at offsets: IndexSet) {
+    func deleteProposalFromConference(at offsets: IndexSet) {        
         self.conference.removeProposal(proposal: self.conference.proposals![offsets.first!])
     }
 }
