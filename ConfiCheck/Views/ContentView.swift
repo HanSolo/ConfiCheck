@@ -231,20 +231,20 @@ struct ContentView: View {
     // Get CSV text of conferences you speak at
     private func getCSVText() -> String {
         if self.model.conferencesPerMonth.isEmpty { return "" }
-        var csvText : String = ""
+        var csvText : String = "\"Conference\",\"Date\",\"City\",\"Country\",\"Proposal(s)\"\n"
         for month in self.model.conferencesPerContinent.keys {
             for conference in self.model.conferencesPerContinent[month] ?? [] {
                 if self.model.attendence.keys.contains(where: { $0 == conference.id }) {
                     if self.model.attendence[conference.id] != 2 { continue }
-                    csvText += "\"\(conference.name)\",\"\(dateFormatter.string(from: conference.date))\",\"\(conference.city)\",\"\(conference.country)\""
+                    csvText += "\"\(conference.name)\",\"\(dateFormatter.string(from: conference.date))\",\"\(conference.city)\",\"\(conference.country)\",\""
                     if conference.proposals != nil && conference.proposals!.count > 0 {
                         conference.proposals!.forEach({ (proposal) in
                             if !proposal.title.isEmpty {
-                                csvText += ",\"\(proposal.title)\""
+                                csvText += "|\(proposal.title)"
                             }
                         })
                     }
-                    csvText += "\n"
+                    csvText += "\"\n"
                 }
             }
         }
