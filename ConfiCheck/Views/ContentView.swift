@@ -19,8 +19,9 @@ struct ContentView: View {
     @State                       private var speakerInfoVisible : Bool          = false
     @State                       private var proposalsVisible   : Bool          = false
     @State                       private var updating           : Bool          = false
-    private let formatter                                       : DateFormatter = DateFormatter()
-    private let calendar                                        : Calendar      = .current
+    @State                       private var searchText         : String        = ""
+    private let formatter                                        : DateFormatter = DateFormatter()
+    private let calendar                                         : Calendar      = .current
     private let dateFormatter: DateFormatter = {
         let formatter : DateFormatter = DateFormatter()
         formatter.setLocalizedDateFormatFromTemplate("d M yyyy")
@@ -29,11 +30,7 @@ struct ContentView: View {
     
             
     var body: some View {
-        VStack {
-            Text("Conferences")
-                .font(.system(size: 24, weight: .medium, design: .rounded))
-                .foregroundStyle(.primary)
-            
+        VStack(spacing: 0) {            
             HStack {
                 Text("Continents")
                     .font(.system(size: 16, weight: .regular, design: .rounded))
@@ -63,57 +60,64 @@ struct ContentView: View {
 
             Divider()
                 .overlay(.secondary)
-            
+                .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
+                        
             if self.model.networkMonitor.isConnected {
-                List {
-                    ForEach(self.model.filteredConferences.keys.sorted(), id: \.self) { month in
-                        Section(isExpanded: Binding<Bool> (
-                            get: {
-                                return isExpanded.contains(month)
+                NavigationStack {
+                    List {
+                        ForEach(self.model.filteredConferences.keys.sorted(), id: \.self) { month in
+                            Section(isExpanded: Binding<Bool> (
+                                get: {
+                                    return isExpanded.contains(month)
+                                },
+                                set: { isExpanding in
+                                    if isExpanding {
+                                        isExpanded.insert(month)
+                                    } else {
+                                        isExpanded.remove(month)
+                                    }
+                                }
+                            ),
+                                    content: {
+                                ForEach(self.model.filteredConferences[month]!.sorted(by: { $0.date < $1.date })) { conference in
+                                    ConferenceView(conference: conference)
+                                        .alignmentGuide(.listRowSeparatorLeading) { d in
+                                            d[.leading]
+                                        }
+                                        .alignmentGuide(.listRowSeparatorTrailing) { d in
+                                            d[.trailing]
+                                        }
+                                }
                             },
-                            set: { isExpanding in
-                                if isExpanding {
-                                    isExpanded.insert(month)
-                                } else {
-                                    isExpanded.remove(month)
+                                    header: {
+                                HStack {
+                                    Text("\(formatter.monthSymbols[month-1].capitalized)")
+                                    Text("\(self.model.filteredConferences[month]!.count > 0 ? "( \(self.model.filteredConferences[month]!.count) )" : "")")
+                                        .foregroundStyle(.secondary)
+                                    
                                 }
                             }
-                        ),
-                        content: {
-                            ForEach(self.model.filteredConferences[month]!.sorted(by: { $0.date < $1.date })) { conference in
-                                ConferenceView(conference: conference)
-                                    .alignmentGuide(.listRowSeparatorLeading) { d in
-                                        d[.leading]
-                                    }
-                                    .alignmentGuide(.listRowSeparatorTrailing) { d in
-                                        d[.trailing]
-                                    }
-                            }
-                        },
-                        header: {
-                            HStack {
-                                Text("\(formatter.monthSymbols[month-1].capitalized)")
-                                Text("\(self.model.filteredConferences[month]!.count > 0 ? "( \(self.model.filteredConferences[month]!.count) )" : "")")
-                                    .foregroundStyle(.secondary)
-                                
-                            }
+                            )
+                            .font(.system(size: 16, weight: .regular, design: .rounded))
+                            .listRowBackground(Color(.systemGray6))
+                            .listRowSeparator(.automatic)
+                            .listRowSeparatorTint(.secondary)
+                            .listRowSpacing(0)
+                            .accentColor(Color(.systemGray2))
                         }
-                        )
-                        .font(.system(size: 16, weight: .regular, design: .rounded))
-                        .listRowBackground(Color(.systemGray6))
-                        .listRowSeparator(.automatic)
-                        .listRowSeparatorTint(.secondary)
-                        .listRowSpacing(0)
-                        .accentColor(Color(.systemGray2))
                     }
-                }
-                .listStyle(.sidebar)
-                .scrollContentBackground(.hidden)
-                .onAppear {
-                    self.isExpanded.insert(calendar.component(.month, from: Date.now))
-                }
-                .refreshable {
-                    updateAll()
+                    .scrollContentBackground(.hidden)
+                    .onAppear {
+                        self.isExpanded.insert(calendar.component(.month, from: Date.now))
+                    }
+                    .refreshable {
+                        updateAll()
+                    }
+                    .listStyle(.sidebar)
+                    .navigationTitle("Conferences")
+                    .searchable(text: $searchText, placement: .automatic, prompt: "Search for conference...")
+                    .textInputAutocapitalization(.never)
+                    .toolbarTitleDisplayMode(.inline)
                 }
             } else {
                 Spacer()
@@ -130,6 +134,7 @@ struct ContentView: View {
             
             Divider()
                 .overlay(.secondary)
+                .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
             
             HStack {
                 Button("Speaker Info") {
@@ -155,6 +160,11 @@ struct ContentView: View {
                 .font(.system(size: 14, weight: .light, design: .rounded))
             }
             .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
+        }
+        .onTapGesture {
+            DispatchQueue.main.async {
+                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil)
+            }
         }
         .onChange(of: self.continent) {
             Properties.instance.selectedContinent = self.continent
@@ -217,6 +227,13 @@ struct ContentView: View {
                     break
             }
         }
+        .onChange(of: self.searchText) {
+            if searchText.isEmpty {
+                updateList()
+            } else {
+                search()
+            }
+        }
         .sheet(isPresented: $speakerInfoVisible) {
             SpeakerInfoView()
         }
@@ -249,6 +266,19 @@ struct ContentView: View {
             }
         }
         return csvText
+    }
+    
+    // Filter list by search
+    private func search() {
+        guard !searchText.isEmpty else { return }
+        self.model.filteredConferences.removeAll()
+        for month in self.model.conferencesPerContinent.keys {
+            if self.model.conferencesPerContinent[month]?.isEmpty ?? true { continue }
+            self.model.filteredConferences[month] = self.model.conferencesPerContinent[month]?.filter({ $0.name.localizedCaseInsensitiveContains(self.searchText) })
+        }
+        self.model.filteredConferences.keys.sorted().forEach({ month in
+            self.isExpanded.insert(month)
+        })
     }
     
     // Update list
@@ -294,9 +324,9 @@ struct ContentView: View {
             case 2:
                 for month in self.model.conferencesPerContinent.keys {
                     if self.model.conferencesPerContinent[month]?.isEmpty ?? true { continue }
-                        self.model.filteredConferences[month] = self.model.conferencesPerContinent[month]?.filter({ $0.cfpDate != nil })
-                                                                                                          .filter({ Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0 != nil })
-                                                                                                          .filter({ Helper.isCfpOpen(date: Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0!) })
+                    self.model.filteredConferences[month] = self.model.conferencesPerContinent[month]?.filter({ $0.cfpDate != nil })
+                                                                                                      .filter({ Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0 != nil })
+                                                                                                      .filter({ Helper.isCfpOpen(date: Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0!) })
                 }
                 self.isExpanded.removeAll()
                 for month in 1...12 {
