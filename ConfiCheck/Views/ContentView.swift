@@ -160,12 +160,7 @@ struct ContentView: View {
                 .font(.system(size: 14, weight: .light, design: .rounded))
             }
             .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
-        }
-        .onTapGesture {
-            DispatchQueue.main.async {
-                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to:nil, from:nil, for:nil)
-            }
-        }
+        }        
         .onChange(of: self.continent) {
             Properties.instance.selectedContinent = self.continent
             let selectedContinent : Constants.Continent = Constants.Continent.allCases[self.continent]
