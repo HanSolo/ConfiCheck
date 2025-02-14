@@ -149,13 +149,17 @@ public struct Helper {
     
     public static func isCfpOpen(date: Date) -> Bool {
         let now : Date = Date.now
-        let diffs = calendar.dateComponents([.year, .month, .day], from: now, to: date)
+        //let diffs = calendar.dateComponents([.year, .month, .day], from: now, to: date)
         
+        return calendar.startOfDay(for: now.dayAfter).timeIntervalSince1970 <= calendar.startOfDay(for: date.dayAfter).timeIntervalSince1970
+        
+        /*
         if diffs.month! <= 0 && diffs.day! <= 0 {
             return false
         } else {
             return true
         }
+        */
     }
     
     public static func profileImageExists(year: Int) -> Bool {
