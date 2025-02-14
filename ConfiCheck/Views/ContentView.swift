@@ -30,159 +30,171 @@ struct ContentView: View {
     
             
     var body: some View {
-        VStack(spacing: 0) {            
-            HStack {
-                Text("Continents")
-                    .font(.system(size: 16, weight: .regular, design: .rounded))
-                Spacer()
-                Picker("Continent", selection: $continent) {
-                    Text(Constants.Continent.all.name).tag(0)
-                    Text(Constants.Continent.africa.name).tag(1)
-                    Text(Constants.Continent.antarctica.name).tag(2)
-                    Text(Constants.Continent.asia.name).tag(3)
-                    Text(Constants.Continent.europe.name).tag(4)
-                    Text(Constants.Continent.northAmerica.name).tag(5)
-                    Text(Constants.Continent.oceania.name).tag(6)
-                    Text(Constants.Continent.southAmerica.name).tag(7)
+        GeometryReader { geometry in
+            VStack(spacing: 0) {
+                HStack {
+                    Text("Continents")
+                        .font(.system(size: 16, weight: .regular, design: .rounded))
+                    Spacer()
+                    Picker("Continent", selection: $continent) {
+                        Text(Constants.Continent.all.name).tag(0)
+                        Text(Constants.Continent.africa.name).tag(1)
+                        Text(Constants.Continent.antarctica.name).tag(2)
+                        Text(Constants.Continent.asia.name).tag(3)
+                        Text(Constants.Continent.europe.name).tag(4)
+                        Text(Constants.Continent.northAmerica.name).tag(5)
+                        Text(Constants.Continent.oceania.name).tag(6)
+                        Text(Constants.Continent.southAmerica.name).tag(7)
+                    }
+                    .pickerStyle(.menu)
+                    .accentColor(.primary)
                 }
-                .pickerStyle(.menu)
-                .accentColor(.primary)
-            }
-            .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
-            
-            Picker("Filter", selection: $filter) {
-                Text("All").tag(0)
-                Text("Speaking").tag(1)
-                Text("CfP open").tag(2)
-            }
-            .pickerStyle(.segmented)
-            .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
-
-            Divider()
-                .overlay(.secondary)
                 .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
-                        
-            if self.model.networkMonitor.isConnected {
-                NavigationStack {
-                    List {
-                        ForEach(self.model.filteredConferences.keys.sorted(), id: \.self) { month in
-                            Section(isExpanded: Binding<Bool> (
-                                get: {
-                                    return isExpanded.contains(month)
+                
+                Picker("Filter", selection: $filter) {
+                    Text("All").tag(0)
+                    Text("Speaking").tag(1)
+                    Text("CfP open").tag(2)
+                }
+                .pickerStyle(.segmented)
+                .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
+                
+                Divider()
+                    .overlay(.secondary)
+                    .padding(EdgeInsets(top: 5, leading: 20, bottom: 0, trailing: 20))
+                TimelineView(.animation(minimumInterval: Constants.CANVAS_REFRESH_INTERVAL)) { timeline in
+                    ScrollView(.horizontal) {
+                        CalendarView()
+                            .frame(width: geometry.size.width / 4.0 * 16.0, height: geometry.size.height * 0.125)
+                    }
+                    .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+                }
+                .padding(0)
+                Divider()
+                    .overlay(.secondary)
+                    .padding(EdgeInsets(top: 0, leading: 20, bottom: 5, trailing: 20))
+                
+                if self.model.networkMonitor.isConnected {
+                    NavigationStack {
+                        List {
+                            ForEach(self.model.filteredConferences.keys.sorted(), id: \.self) { month in
+                                Section(isExpanded: Binding<Bool> (
+                                    get: {
+                                        return isExpanded.contains(month)
+                                    },
+                                    set: { isExpanding in
+                                        if isExpanding {
+                                            isExpanded.insert(month)
+                                        } else {
+                                            isExpanded.remove(month)
+                                        }
+                                    }
+                                ),
+                                        content: {
+                                    ForEach(self.model.filteredConferences[month]!.sorted(by: { $0.date < $1.date })) { conference in
+                                        ConferenceView(conference: conference)
+                                            .alignmentGuide(.listRowSeparatorLeading) { d in
+                                                d[.leading]
+                                            }
+                                            .alignmentGuide(.listRowSeparatorTrailing) { d in
+                                                d[.trailing]
+                                            }
+                                    }
                                 },
-                                set: { isExpanding in
-                                    if isExpanding {
-                                        isExpanded.insert(month)
-                                    } else {
-                                        isExpanded.remove(month)
+                                        header: {
+                                    HStack {
+                                        Text("\(formatter.monthSymbols[month-1].capitalized)")
+                                        Text("\(self.model.filteredConferences[month]!.count > 0 ? "( \(self.model.filteredConferences[month]!.count) )" : "")")
+                                            .foregroundStyle(.secondary)
+                                        
                                     }
                                 }
-                            ),
-                                    content: {
-                                ForEach(self.model.filteredConferences[month]!.sorted(by: { $0.date < $1.date })) { conference in
-                                    ConferenceView(conference: conference)
-                                        .alignmentGuide(.listRowSeparatorLeading) { d in
-                                            d[.leading]
-                                        }
-                                        .alignmentGuide(.listRowSeparatorTrailing) { d in
-                                            d[.trailing]
-                                        }
-                                }
-                            },
-                                    header: {
-                                HStack {
-                                    Text("\(formatter.monthSymbols[month-1].capitalized)")
-                                    Text("\(self.model.filteredConferences[month]!.count > 0 ? "( \(self.model.filteredConferences[month]!.count) )" : "")")
-                                        .foregroundStyle(.secondary)
-                                    
-                                }
+                                )
+                                .font(.system(size: 16, weight: .regular, design: .rounded))
+                                .listRowBackground(Color(.systemGray6))
+                                .listRowSeparator(.automatic)
+                                .listRowSeparatorTint(.secondary)
+                                .listRowSpacing(0)
+                                .accentColor(Color(.systemGray2))
                             }
-                            )
-                            .font(.system(size: 16, weight: .regular, design: .rounded))
-                            .listRowBackground(Color(.systemGray6))
-                            .listRowSeparator(.automatic)
-                            .listRowSeparatorTint(.secondary)
-                            .listRowSpacing(0)
-                            .accentColor(Color(.systemGray2))
                         }
+                        .scrollContentBackground(.hidden)
+                        .onAppear {
+                            self.isExpanded.insert(calendar.component(.month, from: Date.now))
+                        }
+                        .refreshable {
+                            updateAll()
+                        }
+                        .listStyle(.sidebar)
+                        .navigationTitle("Conferences")
+                        .searchable(text: $searchText, placement: .automatic, prompt: "Search for conference...")
+                        .textInputAutocapitalization(.never)
+                        .toolbarTitleDisplayMode(.inline)
                     }
-                    .scrollContentBackground(.hidden)
-                    .onAppear {
-                        self.isExpanded.insert(calendar.component(.month, from: Date.now))
+                } else {
+                    Spacer()
+                    VStack(spacing: 20) {
+                        Text("O F F L I N E")
+                            .font(.system(size: 48, weight: .medium, design: .rounded))
+                            .foregroundStyle(.primary)
+                        Text("You need to be online\nto see the conferences")
+                            .font(.system(size: 24, weight: .thin, design: .rounded))
+                            .foregroundStyle(.secondary)
                     }
-                    .refreshable {
-                        updateAll()
-                    }
-                    .listStyle(.sidebar)
-                    .navigationTitle("Conferences")
-                    .searchable(text: $searchText, placement: .automatic, prompt: "Search for conference...")
-                    .textInputAutocapitalization(.never)
-                    .toolbarTitleDisplayMode(.inline)
+                    Spacer()
                 }
-            } else {
-                Spacer()
-                VStack(spacing: 20) {
-                    Text("O F F L I N E")
-                        .font(.system(size: 48, weight: .medium, design: .rounded))
-                        .foregroundStyle(.primary)
-                    Text("You need to be online\nto see the conferences")
-                        .font(.system(size: 24, weight: .thin, design: .rounded))
-                        .foregroundStyle(.secondary)
-                }
-                Spacer()
-            }
-            
-            Divider()
-                .overlay(.secondary)
-                .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
-            
-            HStack {
-                Button("Speaker Info") {
-                    self.speakerInfoVisible.toggle()
-                }
-                .buttonStyle(.bordered)
-                .foregroundStyle(.primary)
-                .font(.system(size: 14, weight: .light, design: .rounded))
                 
-                Spacer()
+                Divider()
+                    .overlay(.secondary)
+                    .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
                 
-                ShareLink("Export", item: getCSVText())
+                HStack {
+                    Button("Speaker Info") {
+                        self.speakerInfoVisible.toggle()
+                    }
+                    .buttonStyle(.bordered)
+                    .foregroundStyle(.primary)
                     .font(.system(size: 14, weight: .light, design: .rounded))
-                    .accentColor(.primary)
-                
-                Spacer()
-                                
-                Button("Proposals") {
-                    self.proposalsVisible.toggle()
+                    
+                    Spacer()
+                    
+                    ShareLink("Export", item: getCSVText())
+                        .font(.system(size: 14, weight: .light, design: .rounded))
+                        .accentColor(.primary)
+                    
+                    Spacer()
+                    
+                    Button("Proposals") {
+                        self.proposalsVisible.toggle()
+                    }
+                    .buttonStyle(.bordered)
+                    .foregroundStyle(.primary)
+                    .font(.system(size: 14, weight: .light, design: .rounded))
                 }
-                .buttonStyle(.bordered)
-                .foregroundStyle(.primary)
-                .font(.system(size: 14, weight: .light, design: .rounded))
+                .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
             }
-            .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
-        }        
-        .onChange(of: self.continent) {
-            Properties.instance.selectedContinent = self.continent
-            let selectedContinent : Constants.Continent = Constants.Continent.allCases[self.continent]
-            self.model.conferencesPerContinent.removeAll();
-            if self.continent == 0 {
-                self.model.conferencesPerContinent = self.model.conferencesPerMonth
-            } else {
-                for month in self.model.conferencesPerMonth.keys {
-                    if self.model.conferencesPerMonth[month]?.isEmpty ?? true { continue }
-                    self.model.conferencesPerContinent[month] = self.model.conferencesPerMonth[month]?.filter({
-                        let isoInfo : IsoCountryInfo? = IsoCountryCodes.searchByName($0.country)
-                        return isoInfo?.continent == selectedContinent.code
-                    })
+            .onChange(of: self.continent) {
+                Properties.instance.selectedContinent = self.continent
+                let selectedContinent : Constants.Continent = Constants.Continent.allCases[self.continent]
+                self.model.conferencesPerContinent.removeAll();
+                if self.continent == 0 {
+                    self.model.conferencesPerContinent = self.model.conferencesPerMonth
+                } else {
+                    for month in self.model.conferencesPerMonth.keys {
+                        if self.model.conferencesPerMonth[month]?.isEmpty ?? true { continue }
+                        self.model.conferencesPerContinent[month] = self.model.conferencesPerMonth[month]?.filter({
+                            let isoInfo : IsoCountryInfo? = IsoCountryCodes.searchByName($0.country)
+                            return isoInfo?.continent == selectedContinent.code
+                        })
+                    }
                 }
+                self.isExpanded.removeAll()
+                self.isExpanded.insert(calendar.component(.month, from: Date.now))
+                updateList()
             }
-            self.isExpanded.removeAll()
-            self.isExpanded.insert(calendar.component(.month, from: Date.now))
-            updateList()
-        }
-        .onChange(of: self.filter) {
-            self.model.filteredConferences.removeAll()
-            switch self.filter {
+            .onChange(of: self.filter) {
+                self.model.filteredConferences.removeAll()
+                switch self.filter {
                 case 0:
                     self.model.filteredConferences = self.model.conferencesPerContinent
                     self.isExpanded.removeAll()
@@ -208,9 +220,9 @@ struct ContentView: View {
                 case 2:
                     for month in self.model.conferencesPerContinent.keys {
                         if self.model.conferencesPerContinent[month]?.isEmpty ?? true { continue }
-                            self.model.filteredConferences[month] = self.model.conferencesPerContinent[month]?.filter({ $0.cfpDate != nil })
-                                                                                                              .filter({ Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0 != nil })
-                                                                                                              .filter({ Helper.isCfpOpen(date: Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0!) })
+                        self.model.filteredConferences[month] = self.model.conferencesPerContinent[month]?.filter({ $0.cfpDate != nil })
+                            .filter({ Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0 != nil })
+                            .filter({ Helper.isCfpOpen(date: Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0!) })
                     }
                     self.isExpanded.removeAll()
                     for month in 1...12 {
@@ -220,23 +232,24 @@ struct ContentView: View {
                 default:
                     self.model.filteredConferences = self.model.conferencesPerContinent
                     break
+                }
             }
-        }
-        .onChange(of: self.searchText) {
-            if searchText.isEmpty {
-                updateList()
-            } else {
-                search()
+            .onChange(of: self.searchText) {
+                if searchText.isEmpty {
+                    updateList()
+                } else {
+                    search()
+                }
             }
-        }
-        .sheet(isPresented: $speakerInfoVisible) {
-            SpeakerInfoView()
-        }
-        .sheet(isPresented: $proposalsVisible) {
-            ProposalsView()
-        }
-        .task {
-            updateAll()
+            .sheet(isPresented: $speakerInfoVisible) {
+                SpeakerInfoView()
+            }
+            .sheet(isPresented: $proposalsVisible) {
+                ProposalsView()
+            }
+            .task {
+                updateAll()
+            }
         }
     }
     
