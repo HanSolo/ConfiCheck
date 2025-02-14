@@ -124,5 +124,5 @@ struct ConfiCheckApp: App {
             debugPrint("Error calling \(Constants.JAVA_CONFERENCES_JSON_URL). Error: \(error.localizedDescription)")
             return []
         }
-    }
+    }        
 }

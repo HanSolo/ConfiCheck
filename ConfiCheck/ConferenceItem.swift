@@ -16,6 +16,7 @@ final class ConferenceItem: Identifiable, Equatable, Hashable, ObservableObject 
     var country        : String  = ""
     var url            : String  = ""
     var date           : Date    = Date.now
+    var days           : Double  = 0.0
     var type           : String  = ""
     var cfpUrl         : String?
     var cfpDate        : String?
@@ -25,13 +26,14 @@ final class ConferenceItem: Identifiable, Equatable, Hashable, ObservableObject 
     var proposalStates : [String:String]?
     
     
-    init(name: String, location: String, city: String, country: String, url: String, date: Date, type: String, cfpUrl: String? = "", cfpDate: String? = "", lat: Double? = 0.0, lon: Double? = 0.0, proposals: [ProposalItem]? = [], proposalStates: [String:String]? = [:]) {
+    init(name: String, location: String, city: String, country: String, url: String, date: Date, days: Double, type: String, cfpUrl: String? = "", cfpDate: String? = "", lat: Double? = 0.0, lon: Double? = 0.0, proposals: [ProposalItem]? = [], proposalStates: [String:String]? = [:]) {
         self.name           = name
         self.location       = location
         self.city           = city
         self.country        = country
         self.url            = url
         self.date           = date
+        self.days           = days
         self.type           = type
         self.cfpUrl         = cfpUrl!
         self.cfpDate        = cfpDate!

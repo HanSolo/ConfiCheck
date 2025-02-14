@@ -123,8 +123,7 @@ public struct Constants {
                 case .attending    : return .primary
                 case .speaking     : return .green
             }
-        }
-            
+        }            
         
         public static func fromText(text: String) -> AttendingStatus? {
             switch text {
@@ -190,7 +189,7 @@ public struct Constants {
                 case .accepted     : return .green
                 case .rejected     : return .red
             }
-        }
+        }                
         
         var index: Int {
             switch self {

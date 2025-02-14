@@ -68,6 +68,8 @@ class JavaConference: Codable {
         }
         let dates       : (Date?,Date?) = Helper.getDatesFromJavaConferenceDate(date: javaConference.date!)
         let date        : Date    = dates.0 ?? Date(timeIntervalSince1970: 0)
+        let endDate     : Date    = dates.1 ?? date
+        let days        : Double  = Double(Helper.getDaysBetweenDates(dateFrom: date, dateTo: endDate))
         let city        : String  = type == .virtual ? "ONLINE" : cityName
         let country     : String  = type == .virtual ? "" : countryName
         let url         : String  = javaConference.link ?? ""
@@ -76,7 +78,7 @@ class JavaConference: Codable {
         let lat         : Double? = javaConference.coordinates?.lat
         let lon         : Double? = javaConference.coordinates?.lon
         
-        return ConferenceItem(name: name, location: location, city: city, country: country, url: url, date: date, type: type.apiString, cfpUrl: cfpUrl, cfpDate: cfpEndDate, lat: lat, lon: lon)
+        return ConferenceItem(name: name, location: location, city: city, country: country, url: url, date: date, days: days, type: type.apiString, cfpUrl: cfpUrl, cfpDate: cfpEndDate, lat: lat, lon: lon)
     }
 }
 

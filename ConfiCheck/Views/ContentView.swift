@@ -61,18 +61,7 @@ struct ContentView: View {
                 
                 Divider()
                     .overlay(.secondary)
-                    .padding(EdgeInsets(top: 5, leading: 20, bottom: 0, trailing: 20))
-                TimelineView(.animation(minimumInterval: Constants.CANVAS_REFRESH_INTERVAL)) { timeline in
-                    ScrollView(.horizontal) {
-                        CalendarView()
-                            .frame(width: geometry.size.width / 4.0 * 16.0, height: geometry.size.height * 0.125)
-                    }
-                    .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
-                }
-                .padding(0)
-                Divider()
-                    .overlay(.secondary)
-                    .padding(EdgeInsets(top: 0, leading: 20, bottom: 5, trailing: 20))
+                    .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
                 
                 if self.model.networkMonitor.isConnected {
                     NavigationStack {
@@ -90,7 +79,7 @@ struct ContentView: View {
                                         }
                                     }
                                 ),
-                                        content: {
+                                content: {
                                     ForEach(self.model.filteredConferences[month]!.sorted(by: { $0.date < $1.date })) { conference in
                                         ConferenceView(conference: conference)
                                             .alignmentGuide(.listRowSeparatorLeading) { d in
@@ -101,7 +90,7 @@ struct ContentView: View {
                                             }
                                     }
                                 },
-                                        header: {
+                                header: {
                                     HStack {
                                         Text("\(formatter.monthSymbols[month-1].capitalized)")
                                         Text("\(self.model.filteredConferences[month]!.count > 0 ? "( \(self.model.filteredConferences[month]!.count) )" : "")")
@@ -144,9 +133,22 @@ struct ContentView: View {
                     Spacer()
                 }
                 
+                
                 Divider()
                     .overlay(.secondary)
-                    .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
+                    .padding(EdgeInsets(top: 5, leading: 20, bottom: 0, trailing: 20))
+                TimelineView(.animation(minimumInterval: Constants.CANVAS_REFRESH_INTERVAL)) { timeline in
+                    ScrollView(.horizontal) {
+                        CalendarView()
+                            .frame(width: geometry.size.width / 4.0 * 16.0, height: geometry.size.height * 0.125)
+                    }
+                    .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+                }
+                .padding(0)
+                
+                Divider()
+                    .overlay(.secondary)
+                    .padding(EdgeInsets(top: 0, leading: 20, bottom: 5, trailing: 20))
                 
                 HStack {
                     Button("Speaker Info") {
@@ -365,6 +367,7 @@ struct ContentView: View {
                     let conferenceItem : ConferenceItem = self.model.conferences.filter({$0.id == conference.id}).first!
                     conferenceItem.cfpDate = conference.cfpDate
                     conferenceItem.cfpUrl  = conference.cfpUrl
+                    conferenceItem.days    = conference.days
                 } else {
                     self.model.conferences.append(conference)
                 }

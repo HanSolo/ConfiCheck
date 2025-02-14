@@ -40,7 +40,7 @@ struct CalendarView: View {
                 let scaleY                     : Double = availableHeight / Double(maxNoOfConferencesPerMonth)
                 let rectOffsetY                : Double = scaleY * 0.1
                 let rectHeight                 : Double = scaleY * 0.8
-                let valueFontSize              : Double = rectHeight
+                let valueFontSize              : Double = scaleY
                 let valueFont                  : Font   = Font.system(size: valueFontSize, weight: .regular, design: .rounded)
                 
                 // Draw the top xAxis
@@ -69,12 +69,17 @@ struct CalendarView: View {
                     var confCount  : Double = 0.0
                     for conference in self.model.conferencesPerMonth[month] ?? [] {
                         let startDate : Double = calendar.startOfDay(for: conference.date).timeIntervalSince1970
-                        let length    : Double = tickStepX * 1.0 // * conference.duration
+                        let length    : Double = tickStepX * conference.days
                         if startDate >= startOfDay && startDate + Constants.SECONDS_PER_DAY <= startOfDay + Constants.SECONDS_PER_DAY {
+                            var fillColor : GraphicsContext.Shading = Constants.GC_PURPLE
+                            if self.model.attendence.keys.contains(where: { $0 == conference.id }) {
+                                let index : Int = self.model.attendence[conference.id] ?? 0
+                                fillColor = index == 2 ? Constants.GC_GREEN : Constants.GC_PURPLE
+                            }
                             let y    : Double = topY + confCount * scaleY
                             var path : Path  = Path()
-                            path.addRect(CGRect(x: x, y: y + rectOffsetY, width: length, height: rectHeight))
-                            ctx.fill(path, with: Constants.GC_PURPLE)
+                            path.addRect(CGRect(x: x, y: y + rectOffsetY, width: length, height: rectHeight))                            
+                            ctx.fill(path, with: fillColor)
                             
                             let confNameText : Text = Text(verbatim: conference.name)
                                                     .foregroundStyle(fgdColor)

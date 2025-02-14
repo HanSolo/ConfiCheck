@@ -162,6 +162,10 @@ public struct Helper {
         */
     }
     
+    public static func getDaysBetweenDates(dateFrom: Date, dateTo: Date) -> Int {
+        return (calendar.dateComponents([.day], from: calendar.startOfDay(for: dateFrom), to: calendar.startOfDay(for: dateTo)).day ?? 0) + 1
+    }
+    
     public static func profileImageExists(year: Int) -> Bool {
         let fileManager : FileManager = FileManager.default
         let url         : URL         = FileManager.documentsDirectory.appendingPathComponent(Constants.PROFILE_IMAGE_NAME)
