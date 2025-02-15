@@ -58,6 +58,7 @@ struct CfpView: View {
                                 .stroke(Helper.getColorForCfpDate(date: self.endDate!), lineWidth: 1)
                             }
                         )
+                        .strikethrough(!Helper.isCfpOpen(date: self.endDate!))
                     }
                 }
                 .padding(EdgeInsets(top: 3, leading: 5, bottom: 3, trailing: 5))

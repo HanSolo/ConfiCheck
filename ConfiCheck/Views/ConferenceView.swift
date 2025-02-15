@@ -31,7 +31,7 @@ struct ConferenceView: View, Identifiable {
         let isoInfo : IsoCountryInfo? = IsoCountryCodes.searchByName(conference.country)
         let flag    : String          = isoInfo?.flag ?? ""
         
-        VStack(spacing: 10) {
+        VStack(spacing: 12) {
             HStack {
                 // Conference Name
                 Text(conference.name)
