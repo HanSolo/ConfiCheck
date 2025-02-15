@@ -55,9 +55,15 @@ struct ConferenceView: View, Identifiable {
             
             HStack {
                 // Conference Date
-                Text(verbatim: "\(self.formatter.string(from: conference.date))")
-                    .font(.system(size: 12, weight: .regular, design: .rounded))
-                    .foregroundStyle(.primary)
+                if conference.days > 1 {
+                    Text(verbatim: "\(self.formatter.string(from: conference.date)) (\(String(format: "%.0f", conference.days)) days)")
+                        .font(.system(size: 12, weight: .regular, design: .rounded))
+                        .foregroundStyle(.primary)
+                } else {
+                    Text(verbatim: "\(self.formatter.string(from: conference.date))")
+                        .font(.system(size: 12, weight: .regular, design: .rounded))
+                        .foregroundStyle(.primary)
+                }
                 
                 Spacer()
                 
