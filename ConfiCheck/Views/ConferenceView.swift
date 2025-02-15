@@ -7,14 +7,19 @@
 
 import SwiftUI
 import CoreLocation
+import EventKit
 
 struct ConferenceView: View, Identifiable {
+    @Environment(\.openURL)                 private var openURL
     @Environment(\.defaultMinListRowHeight) private var minRowHeight
     @Environment(\.modelContext)            private var context
     @EnvironmentObject                      private var model                    : ConfiModel
     @State                                  private var conference               : ConferenceItem
-    @State                                  private var selectedAttendenceIndex  : Int = 0
-    @State                                  private var proposalSelectionVisible : Bool = false
+    @State                                  private var selectedAttendenceIndex  : Int    = 0
+    @State                                  private var proposalSelectionVisible : Bool   = false
+    @State                                  private var showAlert                : Bool   = false
+    @State                                  private var alertTitle               : String = ""
+    @State                                  private var alertMessage             : String = ""
 
     var id        : String = UUID().uuidString
     let formatter : DateFormatter
@@ -65,6 +70,30 @@ struct ConferenceView: View, Identifiable {
                         .foregroundStyle(.primary)
                 }
                 
+                // Add to calendar
+                Button() {
+                    addConferenceToCalendar(self.conference)
+                } label: {
+                    Image(systemName: "calendar.badge.plus")
+                        .font(.system(size: 12, weight: .regular))
+                        .foregroundStyle(.primary)
+                }
+                .padding(EdgeInsets(top: 3, leading: 5, bottom: 3, trailing: 5))
+                .background(
+                    ZStack {
+                        RoundedRectangle(
+                            cornerRadius: 5,
+                            style       : .continuous
+                        )
+                        .fill(.tertiary)
+                        RoundedRectangle(
+                            cornerRadius: 5,
+                            style       : .continuous
+                        )
+                        .stroke(.tertiary)
+                    }
+                )
+                
                 Spacer()
                 
                 // City Name
@@ -87,12 +116,21 @@ struct ConferenceView: View, Identifiable {
                         Text("WEB")
                             .font(.system(size: 12, weight: .regular, design: .rounded))
                             .foregroundStyle(.primary)
-                        Link(destination: URL(string: conference.url)!) {
+                        
+                        Button() {
+                            //guard let url = URL(string: conference.url) else { return }
+                            //openURL(url)
+                        } label: {
                             Image(systemName: "square.and.arrow.up")
                                 .font(.system(size: 12, weight: .regular))
                                 .foregroundStyle(.primary)
                                 .rotationEffect(.degrees(90))
+                                .onTapGesture {
+                                    guard let url = URL(string: conference.url) else { return }
+                                    openURL(url)
+                                }
                         }
+                        .padding(EdgeInsets(top: 3, leading: 5, bottom: 3, trailing: 5))                        
                     }
                     .padding(EdgeInsets(top: 3, leading: 5, bottom: 3, trailing: 5))
                     .background(
@@ -110,6 +148,7 @@ struct ConferenceView: View, Identifiable {
                         }
                     )
                 }
+                
                 
                 Spacer()
                 
@@ -236,10 +275,56 @@ struct ConferenceView: View, Identifiable {
                 }
             }
         }
+        .alert(isPresented: $showAlert) {
+            Alert(title: Text(self.alertTitle), message: Text(self.alertMessage))
+        }
     }
     
     func deleteProposalFromConference(at offsets: IndexSet) {        
         self.conference.removeProposal(proposal: self.conference.proposals![offsets.first!])
     }
+    
+    // Request Calendar access
+    private func addConferenceToCalendar(_ conference: ConferenceItem) {
+        let eventStore = EKEventStore()
+        eventStore.requestWriteOnlyAccessToEvents() { (granted, error) in
+            if granted && error == nil {
+                var notes : String = ""
+                if !(conference.proposals?.isEmpty ?? false) {
+                    notes += "Sessions:"
+                    for entry in conference.proposalStates! {
+                        if entry.value == Constants.ProposalStatus.accepted.apiString {
+                            notes += "\n\(entry.key)"
+                        }
+                    }
+                }
+                
+                let calendarEvent       = EKEvent(eventStore: eventStore)
+                calendarEvent.title     = conference.name
+                calendarEvent.startDate = conference.date
+                calendarEvent.endDate   = conference.date.addingTimeInterval(conference.days * 86400)
+                calendarEvent.notes     = notes
+                calendarEvent.isAllDay  = true
+                calendarEvent.location  = (conference.lat == nil || conference.lon == nil || (conference.lat == 0.0 && conference.lon == 0.0)) ? "" : "\(conference.city), \(conference.country)"
+                calendarEvent.calendar  = eventStore.defaultCalendarForNewEvents
+                
+                do {
+                    try eventStore.save(calendarEvent, span: .thisEvent)
+                    alertTitle   = "Conference Added"
+                    alertMessage = "\(conference.name) has been successfully added to your calendar."
+                    showAlert    = true
+                } catch {
+                    alertTitle   = "Error"
+                    alertMessage = "There was an error adding the conference to your calendar."
+                    showAlert    = true
+                }
+            } else {
+                alertTitle   = "Error"
+                alertMessage = "Access to the calendar was denied."
+                showAlert    = true
+            }
+        }
+    }
+    
 }
 

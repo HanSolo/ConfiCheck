@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CfpView: View {
+    @Environment(\.openURL) private var openURL
     @State var endDate : Date?
     @State var link    : String?
     
@@ -31,13 +32,23 @@ struct CfpView: View {
                     Text("CFP")
                         .font(.system(size: 12, weight: .regular, design: .rounded))
                         .foregroundStyle(.primary)
+                    
                     if link != nil || !link!.isEmpty {
-                        Link(destination: URL(string: self.link!)!) {
+                        Button() {
+                            //guard let url = URL(string: self.link!) else { return }
+                            //openURL(url)
+                        } label: {
                             Image(systemName: "square.and.arrow.up")
                                 .font(.system(size: 12, weight: .regular))
                                 .foregroundStyle(.primary)
                                 .rotationEffect(.degrees(90))
+                                .onTapGesture {
+                                    guard let url = URL(string: self.link!) else { return }
+                                    openURL(url)
+                                }
                         }
+                        .padding(EdgeInsets(top: 3, leading: 5, bottom: 3, trailing: 5))
+                        .disabled(!Helper.isCfpOpen(date: self.endDate!))
                     }
                     
                     Text(verbatim: "\(self.formatter.string(from: self.endDate!))")
@@ -76,6 +87,7 @@ struct CfpView: View {
                         .stroke(.tertiary)
                     }
                 )
+                                                
                 Spacer()
             }
         }

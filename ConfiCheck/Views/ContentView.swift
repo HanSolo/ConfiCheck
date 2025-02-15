@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import WidgetKit
+import EventKit
 
 
 struct ContentView: View {
