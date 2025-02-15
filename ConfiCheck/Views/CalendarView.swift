@@ -34,6 +34,7 @@ struct CalendarView: View {
                 let numberOfVisibleDays        : Int    = 16 * 7
                 let tickStepX                  : Double = width / Double(numberOfVisibleDays)
                 let minDate                    : Double = calendar.startOfDay(for: Date.now.addingTimeInterval(-Constants.SECONDS_PER_WEEK * 4)).timeIntervalSince1970
+                let fourWeeks                  : Double = 28 * tickStepX
                 var maxNoOfConferencesPerMonth : Int    = 0
                 for items in self.model.conferencesPerMonth.values { maxNoOfConferencesPerMonth = max(items.count, maxNoOfConferencesPerMonth) }
                 let availableHeight            : Double = height - topY
@@ -48,15 +49,18 @@ struct CalendarView: View {
                 topXAxis.move(to: CGPoint(x: 0, y: topY))
                 topXAxis.addLine(to: CGPoint(x: width, y: topY))
                 ctx.stroke(topXAxis, with: Constants.GC_GRAY)
+                                
                 
                 for n in 0..<numberOfVisibleDays {
-                    let date       : Date   = Date(timeIntervalSince1970: minDate + Double(n) * Constants.SECONDS_PER_DAY)
-                    let day        : Int    = calendar.component(.day, from: date)
-                    let x          : Double = Double(n) * tickStepX
-                    var topTick    : Path   = Path()
-                    topTick.move(to: CGPoint(x: x, y: topY))
-                    topTick.addLine(to: CGPoint(x: x, y: topY + availableHeight))
-                    ctx.stroke(topTick, with: Constants.GC_GRAY, lineWidth: day == 1 ? 1.0 : 0.25)
+                    let date      : Date   = Date(timeIntervalSince1970: minDate + Double(n) * Constants.SECONDS_PER_DAY)
+                    let day       : Int    = calendar.component(.day, from: date)
+                    let x         : Double = Double(n) * tickStepX
+                    let isToday   : Bool   = x == fourWeeks
+                    let lineWidth : Double = day == 1 ? 1.0 : isToday ? 0.5 : 0.25
+                    var tick      : Path   = Path()
+                    tick.move(to: CGPoint(x: x, y: topY))
+                    tick.addLine(to: CGPoint(x: x, y: topY + availableHeight))
+                    ctx.stroke(tick, with: isToday ? Constants.GC_RED : Constants.GC_GRAY, lineWidth: lineWidth)
                     if n % 3 == 0 && n != 0 && n != numberOfVisibleDays - 1 {
                         let dayText    : Text   = Text(verbatim: "\(dateFormatter.string(from: date))")
                             .foregroundStyle(fgdColor)

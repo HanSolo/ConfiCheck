@@ -13,15 +13,16 @@ import WidgetKit
 struct ContentView: View {
     @Environment(\.modelContext) private var context
     @EnvironmentObject           private var model              : ConfiModel
-    @State                       private var isExpanded         : Set<Int>      = []
-    @State                       private var continent          : Int           = Properties.instance.selectedContinent!
-    @State                       private var filter             : Int           = 0
-    @State                       private var speakerInfoVisible : Bool          = false
-    @State                       private var proposalsVisible   : Bool          = false
-    @State                       private var updating           : Bool          = false
-    @State                       private var searchText         : String        = ""
-    private let formatter                                        : DateFormatter = DateFormatter()
-    private let calendar                                         : Calendar      = .current
+    @State                       private var isExpanded         : Set<Int>       = []
+    @State                       private var continent          : Int            = Properties.instance.selectedContinent!
+    @State                       private var filter             : Int            = 0
+    @State                       private var speakerInfoVisible : Bool           = false
+    @State                       private var proposalsVisible   : Bool           = false
+    @State                       private var updating           : Bool           = false
+    @State                       private var searchText         : String         = ""
+    @State                       private var scrollPosition     : ScrollPosition = ScrollPosition()
+    private let formatter                                       : DateFormatter  = DateFormatter()
+    private let calendar                                        : Calendar       = .current
     private let dateFormatter: DateFormatter = {
         let formatter : DateFormatter = DateFormatter()
         formatter.setLocalizedDateFormatFromTemplate("d M yyyy")
@@ -143,6 +144,11 @@ struct ContentView: View {
                             .frame(width: geometry.size.width / 4.0 * 16.0, height: geometry.size.height * 0.125)
                     }
                     .padding(EdgeInsets(top: 0, leading: 20, bottom: 0, trailing: 20))
+                    .defaultScrollAnchor(UnitPoint(x: 0.25, y: 0))
+                    .scrollPosition(self.$scrollPosition, anchor: .init(x: 0.25, y: 0))
+                    .onTapGesture(count: 2) {
+                        self.scrollPosition.scrollTo(x: geometry.size.width / 1.5)
+                    }
                 }
                 .padding(0)
                 
