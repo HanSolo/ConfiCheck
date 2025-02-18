@@ -309,7 +309,7 @@ struct ContentView: View {
                 if self.model.conferencesPerMonth[month]?.isEmpty ?? true { continue }
                 self.model.conferencesPerContinent[month] = self.model.conferencesPerMonth[month]?.filter({
                     let isoInfo : IsoCountryInfo? = IsoCountryCodes.searchByName($0.country)
-                    return isoInfo?.continent == selectedContinent.code
+                    return isoInfo?.continent == selectedContinent.code || isoInfo == nil
                 })
             }
         }

@@ -11,7 +11,7 @@ import CoreGraphics
 
 struct CalendarView: View {
     @Environment(\.colorScheme)  private var colorScheme
-    @EnvironmentObject           private var model : ConfiModel
+    @EnvironmentObject           private var model             : ConfiModel
         
     private let calendar      : Calendar      = Calendar.current
     private let dateFormatter : DateFormatter = {
@@ -36,7 +36,7 @@ struct CalendarView: View {
                 let minDate                    : Double = calendar.startOfDay(for: Date.now.addingTimeInterval(-Constants.SECONDS_PER_WEEK * 4)).timeIntervalSince1970
                 let fourWeeks                  : Double = 28 * tickStepX
                 var maxNoOfConferencesPerMonth : Int    = 0
-                for items in self.model.conferencesPerMonth.values { maxNoOfConferencesPerMonth = max(items.count, maxNoOfConferencesPerMonth) }
+                for items in self.model.conferencesPerMonth.values { maxNoOfConferencesPerMonth = max(items.count, maxNoOfConferencesPerMonth) }                
                 let availableHeight            : Double = height - topY
                 let scaleY                     : Double = availableHeight / Double(maxNoOfConferencesPerMonth)
                 let rectOffsetY                : Double = scaleY * 0.1
@@ -71,7 +71,8 @@ struct CalendarView: View {
                     let month      : Int    = calendar.component(.month, from: date)
                     let startOfDay : Double = calendar.startOfDay(for: date).timeIntervalSince1970
                     var confCount  : Double = 0.0
-                    for conference in self.model.conferencesPerMonth[month] ?? [] {
+                    //for conference in self.model.conferencesPerMonth[month] ?? [] {
+                    for conference in self.model.conferencesPerContinent[month] ?? [] {
                         let startDate : Double = calendar.startOfDay(for: conference.date).timeIntervalSince1970
                         let length    : Double = tickStepX * conference.days
                         if startDate >= startOfDay && startDate + Constants.SECONDS_PER_DAY <= startOfDay + Constants.SECONDS_PER_DAY {
