@@ -193,7 +193,7 @@ struct ConferenceView: View, Identifiable {
             // CfP and Attendence
             HStack {
                 if self.conference.cfpUrl != nil && !self.conference.cfpUrl!.isEmpty {
-                    CfpView(endDate: Helper.getDatesFromJavaConferenceDate(date: self.conference.cfpDate ?? "").0, link: self.conference.cfpUrl)
+                    CfpView(endDate: Helper.getDatesFromJavaConferenceDate(date: self.conference.cfpDate ?? "").0?.endOfDay(), link: self.conference.cfpUrl)
                 }
                 
                 Spacer()

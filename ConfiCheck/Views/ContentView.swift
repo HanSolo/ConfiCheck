@@ -55,8 +55,9 @@ struct ContentView: View {
                 
                 Picker("Filter", selection: $filter) {
                     Text("All").tag(0)
-                    Text("Speaking").tag(1)
-                    Text("CfP open").tag(2)
+                    Text("Speaking").backgroundStyle(Constants.GREEN).tag(1)
+                    Text("Attending").tag(2)
+                    Text("CfP open").tag(3)
                 }
                 .pickerStyle(.segmented)
                 .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
@@ -228,6 +229,23 @@ struct ContentView: View {
                     break
                 case 2:
                     for month in self.model.conferencesPerContinent.keys {
+                        for conference in self.model.conferencesPerContinent[month] ?? [] {
+                            if self.model.attendence.keys.contains(where: { $0 == conference.id }) {
+                                if self.model.attendence[conference.id] != 1 { continue }
+                                if !self.model.filteredConferences.keys.contains(month) {
+                                    self.model.filteredConferences[month] = []
+                                }
+                                self.model.filteredConferences[month]!.append(conference)
+                            }
+                        }
+                    }
+                    self.isExpanded.removeAll()
+                    for month in 1...12 {
+                        self.isExpanded.insert(month)
+                    }
+                    break
+                case 3:
+                    for month in self.model.conferencesPerContinent.keys {
                         if self.model.conferencesPerContinent[month]?.isEmpty ?? true { continue }
                         self.model.filteredConferences[month] = self.model.conferencesPerContinent[month]?.filter({ $0.cfpDate != nil })
                             .filter({ Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0 != nil })
@@ -340,6 +358,23 @@ struct ContentView: View {
                 break
             case 2:
                 for month in self.model.conferencesPerContinent.keys {
+                    for conference in self.model.conferencesPerContinent[month] ?? [] {
+                        if self.model.attendence.keys.contains(where: { $0 == conference.id }) {
+                            if self.model.attendence[conference.id] != 1 { continue }
+                            if !self.model.filteredConferences.keys.contains(month) {
+                                self.model.filteredConferences[month] = []
+                            }
+                            self.model.filteredConferences[month]!.append(conference)
+                        }
+                    }
+                }
+                self.isExpanded.removeAll()
+                for month in 1...12 {
+                    self.isExpanded.insert(month)
+                }
+            break
+            case 3:
+                for month in self.model.conferencesPerContinent.keys {
                     if self.model.conferencesPerContinent[month]?.isEmpty ?? true { continue }
                     self.model.filteredConferences[month] = self.model.conferencesPerContinent[month]?.filter({ $0.cfpDate != nil })
                                                                                                       .filter({ Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0 != nil })
@@ -385,6 +420,7 @@ struct ContentView: View {
             loadProposalItemsFromCloudKit()
             
             Helper.storeConferencesThisMonthToUserDefaults(conferencesPerMonth: self.model.conferencesPerMonth, attendence: self.model.attendence)
+            Helper.storeConferencesWithOpenCfPToUserDefaults(conferences: self.model.conferencesWithOpenCfp)
             
             WidgetCenter.shared.reloadAllTimelines()
         }

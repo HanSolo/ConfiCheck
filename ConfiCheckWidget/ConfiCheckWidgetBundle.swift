@@ -12,5 +12,6 @@ import SwiftUI
 struct ConfiCheckWidgetBundle: WidgetBundle {
     var body: some Widget {
         ConfiCheckWidget()
+        ConfiCheckCfPWidget()
     }
 }

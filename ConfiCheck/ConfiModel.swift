@@ -13,13 +13,25 @@ import SwiftUI
 public class ConfiModel: ObservableObject {
     @Published var networkMonitor          : NetworkMonitor           = NetworkMonitor()
     @Published var conferences             : [ConferenceItem]         = []
-    @Published var conferencesPerMonth     : [Int : [ConferenceItem]] = [:] {
+    @Published var conferencesPerMonth     : [Int : [ConferenceItem]] = [:]
+    @Published var conferencesPerContinent : [Int : [ConferenceItem]] = [:] {
         didSet {
-            
+            self.conferencesWithOpenCfp.removeAll()
+            var tmp : [Int : [ConferenceItem]] = [:]
+            for month in self.conferencesPerContinent.keys {
+                if self.conferencesPerContinent[month]?.isEmpty ?? true { continue }
+                tmp[month] = self.conferencesPerContinent[month]?.filter({ $0.cfpDate != nil })
+                                                                 .filter({ Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0 != nil })
+                                                                 .filter({ Helper.isCfpOpen(date: Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0!) })
+            }
+            for month in tmp.keys {
+                if tmp[month]?.isEmpty ?? true { continue }
+                self.conferencesWithOpenCfp.append(contentsOf: tmp[month]!)
+            }
         }
     }
-    @Published var conferencesPerContinent : [Int : [ConferenceItem]] = [:]
     @Published var filteredConferences     : [Int : [ConferenceItem]] = [:]
+    @Published var conferencesWithOpenCfp  : [ConferenceItem]         = []
     @Published var proposals               : [ProposalItem]           = []
     @Published var attendence              : [String : Int]           = Properties.instance.attendence ?? [:] {
         didSet {

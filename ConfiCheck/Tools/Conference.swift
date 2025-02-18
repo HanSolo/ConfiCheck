@@ -10,6 +10,7 @@ import Foundation
 struct Conference : Identifiable {
     let name    : String
     let date    : Date
+    let cfp     : Date
     let country : String
     
     

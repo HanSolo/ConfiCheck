@@ -13,6 +13,11 @@ import PhotosUI
 public struct Helper {
     private static var calendar : Calendar = .current
     
+    public static func clamp(min: Double, max: Double, value: Double) -> Double {
+        if value < min { return min }
+        if value > max { return max }
+        return value
+    }
     
     public static func getDatesFromJavaConferenceDate(date: String) -> (Date?,Date?) {
         if let result = try? Constants.JAVA_CONFERENCE_DATE_REGEX.wholeMatch(in: date) {
@@ -149,17 +154,7 @@ public struct Helper {
     
     public static func isCfpOpen(date: Date) -> Bool {
         let now : Date = Date.now
-        //let diffs = calendar.dateComponents([.year, .month, .day], from: now, to: date)
-        
         return calendar.startOfDay(for: now.dayAfter).timeIntervalSince1970 <= calendar.startOfDay(for: date.dayAfter).timeIntervalSince1970
-        
-        /*
-        if diffs.month! <= 0 && diffs.day! <= 0 {
-            return false
-        } else {
-            return true
-        }
-        */
     }
     
     public static func getDaysBetweenDates(dateFrom: Date, dateTo: Date) -> Int {
@@ -360,14 +355,15 @@ public struct Helper {
     
     static func conferencesToJson(conferences: [ConferenceItem]) -> String {
         var jsonTxt : String = "["
-        for conference in conferences {
-            jsonTxt += "{\"name\":\"\(conference.name)\",\"date\":\(conference.date.timeIntervalSince1970),\"country\":\"\(conference.country)\"},"
+        for conference in conferences {                        
+            jsonTxt += "{\"name\":\"\(conference.name)\",\"date\":\(conference.date.timeIntervalSince1970),\"cfp\":\(getDatesFromJavaConferenceDate(date: conference.cfpDate ?? "").0?.endOfDay().timeIntervalSince1970 ?? 0),\"country\":\"\(conference.country)\"},"
         }
         if conferences.count > 0 { jsonTxt.removeLast() }
         jsonTxt += "]"
         return jsonTxt
     }
     
+    // Conferences this month
     static func storeConferencesThisMonthToUserDefaults(conferencesPerMonth : [Int : [ConferenceItem]], attendence: [String : Int]) -> Void {
         let currentMonth : Int              = Calendar.current.component(.month, from: Date())
         var conferences  : [ConferenceItem] = []
@@ -384,6 +380,26 @@ public struct Helper {
     static func readConferencesThisMonthFromUserDefaults() -> [Conference] {
         var conferences : [Conference] = []
         let encodedData = UserDefaults(suiteName: Constants.APP_GROUP_ID)!.object(forKey: Constants.CONFERENCES_THIS_MONTH_KEY_UD) as? Data
+        if let jsonEncoded = encodedData {
+            let jsonData : [JsonData] = try! JSONDecoder().decode([JsonData].self, from: jsonEncoded)
+            for jd in jsonData {
+                let conference : Conference? = jd.getConference()
+                if nil != conference { conferences.append(conference!) }
+            }
+        }
+        return conferences
+    }
+    
+    // Conferences with open CfP
+    static func storeConferencesWithOpenCfPToUserDefaults(conferences : [ConferenceItem]) -> Void {
+        if conferences.isEmpty { return }
+        let jsonTxt : String = conferencesToJson(conferences: conferences)
+        let jsonData = jsonTxt.data(using: .utf8)
+        UserDefaults(suiteName: Constants.APP_GROUP_ID)!.set(jsonData, forKey: Constants.CONFERENCES_WITH_OPEN_CFP_KEY_UD)
+    }
+    static func readConferencesWithOpenCfPFromUserDefaults() -> [Conference] {
+        var conferences : [Conference] = []
+        let encodedData = UserDefaults(suiteName: Constants.APP_GROUP_ID)!.object(forKey: Constants.CONFERENCES_WITH_OPEN_CFP_KEY_UD) as? Data
         if let jsonEncoded = encodedData {
             let jsonData : [JsonData] = try! JSONDecoder().decode([JsonData].self, from: jsonEncoded)
             for jd in jsonData {

@@ -10,48 +10,49 @@ import SwiftUI
 
 
 public struct Constants {
-    public static let APP_NAME                      : String = "ConfiCheck"
-    public static let APP_GROUP_ID                  : String = "group.eu.hansolo.ConfiCheck"
-    public static let CONTAINER_ID                  : String = "iCloud.eu.hansolo.ConfiCheckContainer"
-    public static let APP_REFRESH_ID                : String = "eu.hansolo.ConfiCheck.refresh"
-    public static let APP_REFRESH_INTERVAL          : Double = 3600 // refresh app every 20 minutes in background
-    public static let CANVAS_REFRESH_INTERVAL       : Double = 10 // sec
-    public static let WIDGET_KIND                   : String = "eu.hansolo.ConfiCheck.widget"
+    public static let APP_NAME                         : String = "ConfiCheck"
+    public static let APP_GROUP_ID                     : String = "group.eu.hansolo.ConfiCheck"
+    public static let CONTAINER_ID                     : String = "iCloud.eu.hansolo.ConfiCheckContainer"
+    public static let APP_REFRESH_ID                   : String = "eu.hansolo.ConfiCheck.refresh"
+    public static let APP_REFRESH_INTERVAL             : Double = 3600 // refresh app every 20 minutes in background
+    public static let CANVAS_REFRESH_INTERVAL          : Double = 10 // sec
+    public static let WIDGET_KIND                      : String = "eu.hansolo.ConfiCheck.widget"
     
-    public static let JAVA_CONFERENCES_JSON_URL     : String = "https://javaconferences.org/conferences.json"
-    public static let DEVELOPER_EVENTS_JSON_URL     : String = "https://developers.events/feed-events.json"
+    public static let JAVA_CONFERENCES_JSON_URL        : String = "https://javaconferences.org/conferences.json"
+    public static let DEVELOPER_EVENTS_JSON_URL        : String = "https://developers.events/feed-events.json"
     
-    public static let CONFERENCES_THIS_MONTH_KEY_UD : String = "conferencesThisMonth"
+    public static let CONFERENCES_THIS_MONTH_KEY_UD    : String = "conferencesThisMonth"
+    public static let CONFERENCES_WITH_OPEN_CFP_KEY_UD : String = "conferencesWithOpenCfp"
     
-    public static let JAVA_CONFERENCE_DATE_REGEX    : Regex  = /(([0-9]{1,2})\s+([A-Za-z]+)\s+([0-9]{4}))|(([0-9]{1,2})[-–]([0-9]{1,2})\s+([a-zA-Z]+)\s+([0-9]{4}))|(([0-9]{1,2})\s+([a-zA-Z]+)\s-\s+([0-9]{1,2})\s([a-zA-Z]+)\s+([0-9]{4}))/
-    public static let EVENT_ITEM_LOCATION_REGEX     : Regex  = /(@\s([a-zA-Z\s]+)\()/
-    public static let EVENT_ITEM_CITY_REGEX         : Regex  = /([A-Za-z0-9\w\.\-\s]+),/
-    public static let EVENT_ITEM_COUNTRY_REGEX      : Regex  = /(@\s([a-zA-Z\s]+)\(([a-zA-Z\s-]+)\))/
-    public static let EVENT_ITEM_DATE_REGEX         : Regex  = /(\s-\s(([A-Za-z]{3})\s([A-Za-z]{3})\s([0-9]{1,2})\s([0-9]{4})))/
+    public static let JAVA_CONFERENCE_DATE_REGEX       : Regex  = /(([0-9]{1,2})\s+([A-Za-z]+)\s+([0-9]{4}))|(([0-9]{1,2})[-–]([0-9]{1,2})\s+([a-zA-Z]+)\s+([0-9]{4}))|(([0-9]{1,2})\s+([a-zA-Z]+)\s-\s+([0-9]{1,2})\s([a-zA-Z]+)\s+([0-9]{4}))/
+    public static let EVENT_ITEM_LOCATION_REGEX        : Regex  = /(@\s([a-zA-Z\s]+)\()/
+    public static let EVENT_ITEM_CITY_REGEX            : Regex  = /([A-Za-z0-9\w\.\-\s]+),/
+    public static let EVENT_ITEM_COUNTRY_REGEX         : Regex  = /(@\s([a-zA-Z\s]+)\(([a-zA-Z\s-]+)\))/
+    public static let EVENT_ITEM_DATE_REGEX            : Regex  = /(\s-\s(([A-Za-z]{3})\s([A-Za-z]{3})\s([0-9]{1,2})\s([0-9]{4})))/
     
-    public static let CITY_DELIMITER                : String = ","
+    public static let CITY_DELIMITER                   : String = ","
     
-    public static let PROFILE_IMAGE_NAME            : String = "ProfileImage"
+    public static let PROFILE_IMAGE_NAME               : String = "ProfileImage"
         
-    public static let SECONDS_PER_HOUR              : Double = 3600
-    public static let SECONDS_PER_DAY               : Double = 86400
-    public static let SECONDS_PER_WEEK              : Double = 604800
+    public static let SECONDS_PER_HOUR                 : Double = 3600
+    public static let SECONDS_PER_DAY                  : Double = 86400
+    public static let SECONDS_PER_WEEK                 : Double = 604800
     
-    public static let GRAY                          : Color  = Color.gray
-    public static let RED                           : Color  = Color(red: 0.996, green: 0.000, blue: 0.000, opacity: 1.00) // RGB 254,   0, 0
-    public static let ORANGE                        : Color  = Color(red: 1.000, green: 0.365, blue: 0.004, opacity: 1.00) // RGB 255,  93, 0
-    public static let YELLOW                        : Color  = Color(red: 1.000, green: 0.659, blue: 0.000, opacity: 1.00) // RGB 255, 168, 0
-    public static let GREEN                         : Color  = Color(red: 0.000, green: 0.761, blue: 0.004, opacity: 1.00) //   0, 194, 1
-    public static let PURPLE                        : Color  = Color(red: 0.620, green: 0.120, blue: 0.640, opacity: 1.00)
+    public static let GRAY                             : Color  = Color.gray
+    public static let RED                              : Color  = Color(red: 0.996, green: 0.000, blue: 0.000, opacity: 1.00) // RGB 254,   0, 0
+    public static let ORANGE                           : Color  = Color(red: 1.000, green: 0.365, blue: 0.004, opacity: 1.00) // RGB 255,  93, 0
+    public static let YELLOW                           : Color  = Color(red: 1.000, green: 0.659, blue: 0.000, opacity: 1.00) // RGB 255, 168, 0
+    public static let GREEN                            : Color  = Color(red: 0.000, green: 0.761, blue: 0.004, opacity: 1.00) //   0, 194, 1
+    public static let PURPLE                           : Color  = Color(red: 0.620, green: 0.120, blue: 0.640, opacity: 1.00)
     
-    public static let GC_BLACK                      : GraphicsContext.Shading = GraphicsContext.Shading.color(.black)
-    public static let GC_WHITE                      : GraphicsContext.Shading = GraphicsContext.Shading.color(.white)
-    public static let GC_GRAY                       : GraphicsContext.Shading = GraphicsContext.Shading.color(GRAY)
-    public static let GC_RED                        : GraphicsContext.Shading = GraphicsContext.Shading.color(RED)
-    public static let GC_ORANGE                     : GraphicsContext.Shading = GraphicsContext.Shading.color(ORANGE)
-    public static let GC_YELLOW                     : GraphicsContext.Shading = GraphicsContext.Shading.color(YELLOW)
-    public static let GC_GREEN                      : GraphicsContext.Shading = GraphicsContext.Shading.color(GREEN)
-    public static let GC_PURPLE                     : GraphicsContext.Shading = GraphicsContext.Shading.color(PURPLE)
+    public static let GC_BLACK                         : GraphicsContext.Shading = GraphicsContext.Shading.color(.black)
+    public static let GC_WHITE                         : GraphicsContext.Shading = GraphicsContext.Shading.color(.white)
+    public static let GC_GRAY                          : GraphicsContext.Shading = GraphicsContext.Shading.color(GRAY)
+    public static let GC_RED                           : GraphicsContext.Shading = GraphicsContext.Shading.color(RED)
+    public static let GC_ORANGE                        : GraphicsContext.Shading = GraphicsContext.Shading.color(ORANGE)
+    public static let GC_YELLOW                        : GraphicsContext.Shading = GraphicsContext.Shading.color(YELLOW)
+    public static let GC_GREEN                         : GraphicsContext.Shading = GraphicsContext.Shading.color(GREEN)
+    public static let GC_PURPLE                        : GraphicsContext.Shading = GraphicsContext.Shading.color(PURPLE)
 
     
     

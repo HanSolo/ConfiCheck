@@ -38,11 +38,12 @@ struct CalendarView: View {
                 var maxNoOfConferencesPerMonth : Int    = 0
                 for items in self.model.conferencesPerMonth.values { maxNoOfConferencesPerMonth = max(items.count, maxNoOfConferencesPerMonth) }                
                 let availableHeight            : Double = height - topY
-                let scaleY                     : Double = availableHeight / Double(maxNoOfConferencesPerMonth)
+                let scaleY                     : Double = Helper.clamp(min: 0.5, max: 6.5, value: availableHeight / Double(maxNoOfConferencesPerMonth))
                 let rectOffsetY                : Double = scaleY * 0.1
                 let rectHeight                 : Double = scaleY * 0.8
                 let valueFontSize              : Double = scaleY
                 let valueFont                  : Font   = Font.system(size: valueFontSize, weight: .regular, design: .rounded)
+                                
                 
                 // Draw the top xAxis
                 var topXAxis : Path = Path()
@@ -71,7 +72,6 @@ struct CalendarView: View {
                     let month      : Int    = calendar.component(.month, from: date)
                     let startOfDay : Double = calendar.startOfDay(for: date).timeIntervalSince1970
                     var confCount  : Double = 0.0
-                    //for conference in self.model.conferencesPerMonth[month] ?? [] {
                     for conference in self.model.conferencesPerContinent[month] ?? [] {
                         let startDate : Double = calendar.startOfDay(for: conference.date).timeIntervalSince1970
                         let length    : Double = tickStepX * conference.days
@@ -79,7 +79,11 @@ struct CalendarView: View {
                             var fillColor : GraphicsContext.Shading = Constants.GC_PURPLE
                             if self.model.attendence.keys.contains(where: { $0 == conference.id }) {
                                 let index : Int = self.model.attendence[conference.id] ?? 0
-                                fillColor = index == 2 ? Constants.GC_GREEN : Constants.GC_PURPLE
+                                switch index {
+                                    case  1: fillColor = Constants.GC_ORANGE
+                                    case  2: fillColor = Constants.GC_GREEN
+                                    default: fillColor = Constants.GC_PURPLE
+                                }
                             }
                             let y    : Double = topY + confCount * scaleY
                             var path : Path  = Path()

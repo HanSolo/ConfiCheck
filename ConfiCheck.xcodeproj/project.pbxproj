@@ -69,6 +69,7 @@
 				"Extensions/Array+UniqueElements.swift",
 				"Extensions/Color+components.swift",
 				"Extensions/Date+DayBeforeAfter.swift",
+				"Extensions/Date+EndOfDay.swift",
 				"Extensions/DateFormatter+ISO8691.swift",
 				"Extensions/FileManager+documentsDirectory.swift",
 				"Extensions/Notification+Name.swift",
