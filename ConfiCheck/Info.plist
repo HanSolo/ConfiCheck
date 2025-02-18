@@ -10,6 +10,8 @@
 	<string>We need to be able to add Conferences to your Calendar</string>
 	<key>NSCalendarsWriteOnlyAccessUsageDescription</key>
 	<string>We need to be able to add Conferences to your Calendar</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>We need to be able to add Conferences to your Calendar</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>remote-notification</string>

@@ -21,7 +21,8 @@ struct ConferenceView: View, Identifiable {
     @State                                  private var alertTitle               : String = ""
     @State                                  private var alertMessage             : String = ""
 
-    var id        : String = UUID().uuidString
+    let calendar  : Calendar = Calendar.current
+    var id        : String   = UUID().uuidString
     let formatter : DateFormatter
     
     
@@ -287,7 +288,7 @@ struct ConferenceView: View, Identifiable {
     // Request Calendar access
     private func addConferenceToCalendar(_ conference: ConferenceItem) {
         let eventStore = EKEventStore()
-        eventStore.requestWriteOnlyAccessToEvents() { (granted, error) in
+        eventStore.requestFullAccessToEvents { (granted, error) in
             if granted && error == nil {
                 var notes : String = ""
                 if !(conference.proposals?.isEmpty ?? false) {
@@ -299,24 +300,35 @@ struct ConferenceView: View, Identifiable {
                     }
                 }
                 
-                let calendarEvent       = EKEvent(eventStore: eventStore)
+                let startDate           : Date       = calendar.startOfDay(for: conference.date)
+                let endDate             : Date       = conference.date.addingTimeInterval((conference.days - 1) * 86400).endOfDay()
+                let calendarEvent       : EKEvent    = EKEvent(eventStore: eventStore)
                 calendarEvent.title     = conference.name
-                calendarEvent.startDate = conference.date
-                calendarEvent.endDate   = conference.date.addingTimeInterval(conference.days * 86400)
+                calendarEvent.startDate = startDate
+                calendarEvent.endDate   = endDate
                 calendarEvent.notes     = notes
                 calendarEvent.isAllDay  = true
                 calendarEvent.location  = (conference.lat == nil || conference.lon == nil || (conference.lat == 0.0 && conference.lon == 0.0)) ? "" : "\(conference.city), \(conference.country)"
                 calendarEvent.calendar  = eventStore.defaultCalendarForNewEvents
                 
-                do {
-                    try eventStore.save(calendarEvent, span: .thisEvent)
-                    alertTitle   = "Conference Added"
-                    alertMessage = "\(conference.name) has been successfully added to your calendar."
+                let predicate          = eventStore.predicateForEvents(withStart: startDate, end: endDate, calendars: nil)
+                let existingEvents     = eventStore.events(matching: predicate)
+                let eventAlreadyExists = existingEvents.first(where: { $0.title == conference.name && $0.startDate == startDate && $0.endDate == endDate} ) != nil
+                if eventAlreadyExists {
+                    alertTitle   = "Conference exists"
+                    alertMessage = "\(conference.name) already exists in your calendar."
                     showAlert    = true
-                } catch {
-                    alertTitle   = "Error"
-                    alertMessage = "There was an error adding the conference to your calendar."
-                    showAlert    = true
+                } else {
+                    do {
+                        try eventStore.save(calendarEvent, span: .thisEvent)
+                        alertTitle   = "Conference Added"
+                        alertMessage = "\(conference.name) has been successfully added to your calendar."
+                        showAlert    = true
+                    } catch {
+                        alertTitle   = "Error"
+                        alertMessage = "There was an error adding the conference to your calendar."
+                        showAlert    = true
+                    }
                 }
             } else {
                 alertTitle   = "Error"
