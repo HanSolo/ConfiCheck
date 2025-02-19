@@ -64,16 +64,17 @@ struct ConfiCheckCfPWidgetEntryView : View {
     var body: some View {
         let sorted : [Conference] = Array(self.entry.conferences).sorted(by: { lhs, rhs in
             return rhs.cfp > lhs.cfp
-        })        
+        })
+        let fontSize : Double = sorted.count > 12 ? 10 : 12
         
         if family == .systemLarge {
-            VStack {
+            VStack(spacing: 2) {
                 if self.entry.conferences.isEmpty {
                     Text("No conferences with open CfP")
                         .font(.system(size: 13))
                 } else {
                     Text("Conferences with open CfP")
-                        .font(.system(size: 13))
+                        .font(.system(size: 12))
                     ForEach(Array(sorted)) { conference in
                         HStack {
                             let isoInfo : IsoCountryInfo? = IsoCountryCodes.searchByName(conference.country)
@@ -81,26 +82,30 @@ struct ConfiCheckCfPWidgetEntryView : View {
                             // Country Flag
                             if isoInfo == nil {
                                 Image(systemName: "network")
-                                    .font(.system(size: 12))
+                                    .font(.system(size: fontSize))
                                     .foregroundStyle(.primary)
                             } else {
                                 Text(flag)
-                                    .font(.system(size: 12))
+                                    .font(.system(size: fontSize))
                                     .foregroundStyle(.primary)
                                     .padding(EdgeInsets(top: 2, leading: 2, bottom: 2, trailing: 2))
                             }
                             Spacer()
                             Text(conference.name)
-                                .font(.system(size: 12, weight: .medium, design: .rounded))
+                                .font(.system(size: fontSize, weight: .medium, design: .rounded))
                                 .foregroundStyle(.primary)
+                                .truncationMode(.tail)
+                                .allowsTightening(true)
+                                .lineLimit(1)
                             Text(dateFormatter.string(from: conference.cfp) )
-                                .font(.system(size: 12, weight: .medium, design: .rounded))
+                                .font(.system(size: fontSize, weight: .medium, design: .rounded))
                                 .foregroundStyle(.primary)
                         }
                     }
                     Spacer()
                 }
             }
+            .padding(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0))
             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
             .containerBackground(for: .widget) {
                 Color.init(red: 0.1, green: 0.1, blue: 0.1)

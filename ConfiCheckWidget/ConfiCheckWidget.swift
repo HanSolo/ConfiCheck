@@ -62,17 +62,20 @@ struct ConfiCheckWidgetEntryView : View {
 
     
     var body: some View {
-        let sorted : [Conference] = Array(self.entry.conferences).sorted(by: { lhs, rhs in
+        let sorted   : [Conference] = Array(self.entry.conferences).sorted(by: { lhs, rhs in
             return rhs.date < lhs.date
         })
-        let count  : Int          = sorted.count
+        let count    : Int          = sorted.count
+        let fontSize : Double       = count > 6 ? 10 : 12
         
         if family == .systemLarge {
-            VStack {
+            VStack(spacing: 2) {
                 if self.entry.conferences.isEmpty {
                     Text("No conferences this month")
                         .font(.system(size: 13))
                 } else {
+                    Text("Conferences this month")
+                        .font(.system(size: 12))
                     ForEach(Array(sorted)) { conference in
                         HStack {
                             let isoInfo : IsoCountryInfo? = IsoCountryCodes.searchByName(conference.country)
@@ -80,20 +83,23 @@ struct ConfiCheckWidgetEntryView : View {
                             // Country Flag
                             if isoInfo == nil {
                                 Image(systemName: "network")
-                                    .font(.system(size: 13))
+                                    .font(.system(size: fontSize))
                                     .foregroundStyle(.primary)
                             } else {
                                 Text(flag)
-                                    .font(.system(size: 13))
+                                    .font(.system(size: fontSize))
                                     .foregroundStyle(.primary)
                                     .padding(EdgeInsets(top: 2, leading: 2, bottom: 2, trailing: 2))
                             }
                             Spacer()
                             Text(conference.name)
-                                .font(.system(size: 13, weight: .medium, design: .rounded))
+                                .font(.system(size: fontSize, weight: .medium, design: .rounded))
                                 .foregroundStyle(.primary)
+                                .truncationMode(.tail)
+                                .allowsTightening(true)
+                                .lineLimit(1)
                             Text(dateFormatter.string(from: conference.date) )
-                                .font(.system(size: 13, weight: .medium, design: .rounded))
+                                .font(.system(size: fontSize, weight: .medium, design: .rounded))
                                 .foregroundStyle(.primary)
                         }
                     }
@@ -113,11 +119,11 @@ struct ConfiCheckWidgetEntryView : View {
                         .font(.system(size: 13))
                 }
             } else {
-                if count > 4 {
-                    let left : [Conference] = Array(sorted.prefix(through: 3))
-                    let right: [Conference] = Array(sorted.suffix(from: 4))
+                if count > 6 {
+                    let left     : [Conference] = Array(sorted.prefix(through: 5))
+                    let right    : [Conference] = Array(sorted.suffix(from: 6))
                     HStack(alignment: .top, spacing: 20) {
-                        VStack {
+                        VStack(spacing: 2) {
                             ForEach(Array(left)) { conference in
                                 HStack {
                                     let isoInfo : IsoCountryInfo? = IsoCountryCodes.searchByName(conference.country)
@@ -125,26 +131,29 @@ struct ConfiCheckWidgetEntryView : View {
                                     // Country Flag
                                     if isoInfo == nil {
                                         Image(systemName: "network")
-                                            .font(.system(size: 13))
+                                            .font(.system(size: fontSize))
                                             .foregroundStyle(.primary)
                                     } else {
                                         Text(flag)
-                                            .font(.system(size: 13))
+                                            .font(.system(size: fontSize))
                                             .foregroundStyle(.primary)
                                             .padding(EdgeInsets(top: 2, leading: 2, bottom: 2, trailing: 2))
                                     }
                                     Spacer()
                                     Text(conference.name)
-                                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                                        .font(.system(size: fontSize, weight: .medium, design: .rounded))
                                         .foregroundStyle(.primary)
+                                        .truncationMode(.tail)
+                                        .allowsTightening(true)
+                                        .lineLimit(1)
                                     Text(dateFormatter.string(from: conference.date) )
-                                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                                        .font(.system(size: fontSize, weight: .medium, design: .rounded))
                                         .foregroundStyle(.primary)
                                 }
-                                Spacer()
+                                //Spacer()
                             }
                         }
-                        VStack {
+                        VStack(spacing: 2) {
                             ForEach(Array(right)) { conference in
                                 HStack {
                                     let isoInfo : IsoCountryInfo? = IsoCountryCodes.searchByName(conference.country)
@@ -152,23 +161,26 @@ struct ConfiCheckWidgetEntryView : View {
                                     // Country Flag
                                     if isoInfo == nil {
                                         Image(systemName: "network")
-                                            .font(.system(size: 13))
+                                            .font(.system(size: fontSize))
                                             .foregroundStyle(.primary)
                                     } else {
                                         Text(flag)
-                                            .font(.system(size: 13))
+                                            .font(.system(size: fontSize))
                                             .foregroundStyle(.primary)
                                             .padding(EdgeInsets(top: 2, leading: 2, bottom: 2, trailing: 2))
                                     }
                                     Spacer()
                                     Text(conference.name)
-                                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                                        .font(.system(size: fontSize, weight: .medium, design: .rounded))
                                         .foregroundStyle(.primary)
+                                        .truncationMode(.tail)
+                                        .allowsTightening(true)
+                                        .lineLimit(1)
                                     Text(dateFormatter.string(from: conference.date) )
-                                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                                        .font(.system(size: fontSize, weight: .medium, design: .rounded))
                                         .foregroundStyle(.primary)
                                 }
-                                Spacer()
+                                //Spacer()
                             }
                         }
                     }
@@ -179,7 +191,7 @@ struct ConfiCheckWidgetEntryView : View {
                     .cornerRadius(5)
                     .edgesIgnoringSafeArea(.all)
                 } else {
-                    VStack {
+                    VStack(spacing: 2) {
                         if self.entry.conferences.isEmpty {
                             Text("No conferences this month")
                                 .font(.system(size: 13))
@@ -191,20 +203,23 @@ struct ConfiCheckWidgetEntryView : View {
                                     // Country Flag
                                     if isoInfo == nil {
                                         Image(systemName: "network")
-                                            .font(.system(size: 13))
+                                            .font(.system(size: fontSize))
                                             .foregroundStyle(.primary)
                                     } else {
                                         Text(flag)
-                                            .font(.system(size: 13))
+                                            .font(.system(size: fontSize))
                                             .foregroundStyle(.primary)
                                             .padding(EdgeInsets(top: 2, leading: 2, bottom: 2, trailing: 2))
                                     }
                                     Spacer()
                                     Text(conference.name)
-                                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                                        .font(.system(size: fontSize, weight: .medium, design: .rounded))
                                         .foregroundStyle(.primary)
+                                        .truncationMode(.tail)
+                                        .allowsTightening(true)
+                                        .lineLimit(1)
                                     Text(dateFormatter.string(from: conference.date) )
-                                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                                        .font(.system(size: fontSize, weight: .medium, design: .rounded))
                                         .foregroundStyle(.primary)
                                 }
                             }
