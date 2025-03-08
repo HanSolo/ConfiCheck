@@ -276,6 +276,7 @@ struct ContentView: View {
             }
             .task {
                 updateAll()
+                await Cache.shared.updateJavaChampions()
             }
         }
     }
@@ -292,10 +293,11 @@ struct ContentView: View {
                     if conference.proposals != nil && conference.proposals!.count > 0 {
                         conference.proposals!.forEach({ (proposal) in
                             if !proposal.title.isEmpty {
-                                csvText += "|\(proposal.title)"
+                                csvText += "\(proposal.title)|"
                             }
                         })
                     }
+                    if csvText.last == "|" { csvText.removeLast() }
                     csvText += "\"\n"
                 }
             }

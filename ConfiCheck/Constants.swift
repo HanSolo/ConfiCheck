@@ -20,6 +20,11 @@ public struct Constants {
     
     public static let JAVA_CONFERENCES_JSON_URL        : String = "https://javaconferences.org/conferences.json"
     public static let DEVELOPER_EVENTS_JSON_URL        : String = "https://developers.events/feed-events.json"
+    public static let JAVA_CHAMPIONS_YAML_URL          : String = "https://raw.githubusercontent.com/aalmiray/java-champions/refs/heads/main/java-champions.yml"
+    public static let JAVA_CHAMPIONS_ATTENDENCE_URL    : String = "https://raw.githubusercontent.com/aalmiray/java-champions/refs/heads/main/java-champions.yml"
+    public static let JAVA_CHAMPIONS_PR_URL            : String = "https://github.com/aalmiray/java-champions/pulls";
+    
+    public static let BEARER_TOKEN                     : String = ""
     
     public static let CONFERENCES_THIS_MONTH_KEY_UD    : String = "conferencesThisMonth"
     public static let CONFERENCES_WITH_OPEN_CFP_KEY_UD : String = "conferencesWithOpenCfp"
@@ -29,6 +34,7 @@ public struct Constants {
     public static let EVENT_ITEM_CITY_REGEX            : Regex  = /([A-Za-z0-9\w\.\-\s]+),/
     public static let EVENT_ITEM_COUNTRY_REGEX         : Regex  = /(@\s([a-zA-Z\s]+)\(([a-zA-Z\s-]+)\))/
     public static let EVENT_ITEM_DATE_REGEX            : Regex  = /(\s-\s(([A-Za-z]{3})\s([A-Za-z]{3})\s([0-9]{1,2})\s([0-9]{4})))/
+    public static let YAML_NAME_REGEX                  : Regex  = /^\s+\-\s+name:\s+(Prof.\s?Dr.\s|Dr.\s?Dr.\s|Dr\.\s|Prof\.\s|Phd\.\s)?([a-zA-ZäüöÄÜÖßéÉáÁóÓíÍèÈàÀòÒìÌêÊâÂôÔîÎ\-]+)\s?([a-zA-ZäüöÄÜÖßéÉáÁóÓíÍèÈàÀòÒìÌêÊâÂôÔîÎ\-]+)?\s?([a-zA-ZäüöÄÜÖßéÉáÁóÓíÍèÈàÀòÒìÌêÊâÂôÔîÎ\-]+)?\s?([a-zA-ZäüöÄÜÖßéÉáÁóÓíÍèÈàÀòÒìÌêÊâÂôÔîÎ\-]+)?\s?([a-zA-ZäüöÄÜÖßéÉáÁóÓíÍèÈàÀòÒìÌêÊâÂôÔîÎ\-]+)?\s+([a-zA-ZäüöÄÜÖßéÉáÁóÓíÍèÈàÀòÒìÌêÊâÂôÔîÎ\-]+)$/
     
     public static let CITY_DELIMITER                   : String = ","
     
@@ -80,7 +86,7 @@ public struct Constants {
         
         public static func fromText(text: String) -> ConferenceType? {
             switch text {
-            case "in-person" : return .inPerson
+            case "in_person" : return .inPerson
             case "virtual"   : return .virtual
             case "hybrid"    : return .hybrid
             default          : return nil
@@ -262,7 +268,7 @@ public struct Constants {
             }
         }
         
-        public var index: Int {
+        public var id: Int {
             switch self {
                 case .all          : return 0
                 case .africa       : return 1

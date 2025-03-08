@@ -76,11 +76,13 @@
 				"Extensions/String+localized.swift",
 				ProfileModel.swift,
 				ProposalItem.swift,
+				Tools/Cache.swift,
 				Tools/Conference.swift,
 				Tools/Country.swift,
 				Tools/Helper.swift,
 				Tools/IsoCountryCodes.swift,
 				Tools/IsoCountryInfo.swift,
+				Tools/JavaChampion.swift,
 				Tools/JsonData.swift,
 				Tools/NetworkMonitor.swift,
 				Tools/RestController.swift,
@@ -240,6 +242,8 @@
 			);
 			mainGroup = 4F7506382D380B0F00F457A1;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 4F7506422D380B0F00F457A1 /* Products */;
 			projectDirPath = "";
@@ -301,7 +305,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ConfiCheck/ConfiCheck.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 55;
+				CURRENT_PROJECT_VERSION = 56;
 				DEVELOPMENT_ASSET_PATHS = "\"ConfiCheck/Preview Content\"";
 				DEVELOPMENT_TEAM = L4A7549EHC;
 				ENABLE_PREVIEWS = YES;
@@ -322,7 +326,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 18.0.15;
+				MARKETING_VERSION = 18.0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = eu.hansolo.ConfiCheck;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -342,7 +346,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = ConfiCheck/ConfiCheck.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 55;
+				CURRENT_PROJECT_VERSION = 56;
 				DEVELOPMENT_ASSET_PATHS = "\"ConfiCheck/Preview Content\"";
 				DEVELOPMENT_TEAM = L4A7549EHC;
 				ENABLE_PREVIEWS = YES;
@@ -363,7 +367,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 18.0.15;
+				MARKETING_VERSION = 18.0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = eu.hansolo.ConfiCheck;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
@@ -502,7 +506,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = ConfiCheckWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 55;
+				CURRENT_PROJECT_VERSION = 56;
 				DEVELOPMENT_TEAM = L4A7549EHC;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ConfiCheckWidget/Info.plist;
@@ -513,7 +517,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 18.0.15;
+				MARKETING_VERSION = 18.0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = eu.hansolo.ConfiCheck.ConfiCheckWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -534,7 +538,7 @@
 				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
 				CODE_SIGN_ENTITLEMENTS = ConfiCheckWidgetExtension.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 55;
+				CURRENT_PROJECT_VERSION = 56;
 				DEVELOPMENT_TEAM = L4A7549EHC;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ConfiCheckWidget/Info.plist;
@@ -545,7 +549,7 @@
 					"@executable_path/Frameworks",
 					"@executable_path/../../Frameworks",
 				);
-				MARKETING_VERSION = 18.0.15;
+				MARKETING_VERSION = 18.0.17;
 				PRODUCT_BUNDLE_IDENTIFIER = eu.hansolo.ConfiCheck.ConfiCheckWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

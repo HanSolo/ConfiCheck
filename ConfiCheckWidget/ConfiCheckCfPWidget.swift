@@ -8,7 +8,7 @@
 import WidgetKit
 import SwiftUI
 
-struct CfPProvider: TimelineProvider {
+struct CfpProvider: TimelineProvider {
     @EnvironmentObject private var model : ConfiModel
     
     func placeholder(in context: Context) -> ConfiCheckEntry {
@@ -39,13 +39,7 @@ struct CfPProvider: TimelineProvider {
 }
 
 
-struct ConfiCheckCfPEntry: TimelineEntry {
-    let date        : Date
-    let conferences : [Conference]
-}
-
-
-struct ConfiCheckCfPWidgetEntryView : View {
+struct ConfiCheckCfpWidgetEntryView : View {
     @Environment(\.widgetFamily) private var family
         
     private let dateFormatter : DateFormatter = {
@@ -53,10 +47,10 @@ struct ConfiCheckCfPWidgetEntryView : View {
         formatter.setLocalizedDateFormatFromTemplate("d M")
         return formatter
     }()
-    private var entry         : CfPProvider.Entry
+    private var entry         : CfpProvider.Entry
     
     
-    init(entry: CfPProvider.Entry) {
+    init(entry: CfpProvider.Entry) {
         self.entry = entry
     }
 
@@ -122,12 +116,12 @@ struct ConfiCheckCfPWidget: Widget {
     let kind: String = "ConfiCheckCfPWidget"
 
     var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind, provider: CfPProvider()) { entry in
+        StaticConfiguration(kind: kind, provider: CfpProvider()) { entry in
             if #available(iOS 17.0, *) {
-                ConfiCheckCfPWidgetEntryView(entry: entry)
+                ConfiCheckCfpWidgetEntryView(entry: entry)
                     .containerBackground(.fill.tertiary, for: .widget)
             } else {
-                ConfiCheckCfPWidgetEntryView(entry: entry)
+                ConfiCheckCfpWidgetEntryView(entry: entry)
                     .padding()
                     .background()
             }

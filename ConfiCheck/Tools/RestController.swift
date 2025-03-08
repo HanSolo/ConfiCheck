@@ -76,4 +76,100 @@ class RestController {
             return []
         }
     }
+    
+    public static func fetchJavaChampions() async -> String {
+        if let url = URL(string: Constants.JAVA_CHAMPIONS_YAML_URL) {
+            do {
+                let str  = try String(contentsOf: url, encoding: .utf8)
+                //debugPrint("YAML: \(str)")
+                return str
+            } catch {
+                debugPrint("JavaChampions yaml could not be loaded")
+                return ""
+            }
+        } else {
+            debugPrint("Bad url \(Constants.JAVA_CHAMPIONS_YAML_URL)")
+            return ""
+        }
+    }
+    
+    public static func fetchJavaChampionsAttendence() async -> String {
+        if let url = URL(string: Constants.JAVA_CHAMPIONS_ATTENDENCE_URL) {
+            do {
+                let str  = try String(contentsOf: url, encoding: .utf8)
+                //debugPrint("YAML: \(str)")
+                return str
+            } catch {
+                debugPrint("JavaChampions yaml could not be loaded")
+                return ""
+            }
+        } else {
+            debugPrint("Bad url \(Constants.JAVA_CHAMPIONS_YAML_URL)")
+            return ""
+        }
+    }
+    
+    public static func createPullRequest(jsonTxt : String) -> Void {
+        let data : Data = Data(jsonTxt.data(using: .utf8)!)
+        //let data : NSMutableData = NSMutableData(data: jsonTxt.data(using: .utf8)!)
+        let url  : URL  = URL(string: Constants.JAVA_CHAMPIONS_PR_URL)!
+        let headers = [
+            "Accept"               : "application/vnd.github+json",
+            "Authorization"        : "Bearer \(Constants.BEARER_TOKEN)",
+            "X-GitHub-Api-Version" : "2022-11-28",
+            "Content-Type"         : "application/x-www-form-urlencoded"
+        ]
+
+        var request = URLRequest(url: url)
+        request.httpMethod          = "POST"
+        request.allHTTPHeaderFields = headers
+        request.httpBody            = data as Data
+
+        let task = URLSession.shared.dataTask(with: request) { (data, response, error) in
+            if let error = error {
+                print(error)
+            } else if let data = data {
+                let str = String(data: data, encoding: .utf8)
+                print(str ?? "")
+            }
+        }
+        task.resume()
+    }
+    
+    public static func createGithubPR(jsonTxt : String) async -> Void {
+        let sessionConfig : URLSessionConfiguration = URLSessionConfiguration.default
+        sessionConfig.timeoutIntervalForRequest  = 30.0
+        sessionConfig.timeoutIntervalForResource = 30.0
+        sessionConfig.isDiscretionary            = false
+        
+        let data        : Data            = Data(jsonTxt.data(using: .utf8)!)
+        let urlString   : String          = "\(Constants.JAVA_CHAMPIONS_PR_URL)"
+        let session     : URLSession      = URLSession(configuration: sessionConfig, delegate: nil, delegateQueue: .main)
+        let finalUrl    : URL             = URL(string: urlString)!
+        let headers     : [String:String] = [
+            "Accept"               : "application/vnd.github+json",
+            "Authorization"        : "Bearer \(Constants.BEARER_TOKEN)",
+            "X-GitHub-Api-Version" : "2022-11-28",
+            "Content-Type"         : "application/x-www-form-urlencoded"
+        ]
+        var request     : URLRequest      = URLRequest(url: finalUrl)
+        request.allHTTPHeaderFields = headers
+        request.httpBody            = data as Data
+        request.httpMethod          = "POST"
+        
+        do {
+            let resp: (Data,URLResponse) = try await session.data(for: request)
+            if let httpResponse = resp.1 as? HTTPURLResponse {
+                if httpResponse.statusCode == 201 {
+                    debugPrint("PR successfully created")
+                } else {
+                    debugPrint("Error creating PR, http response status code = \(httpResponse.statusCode)")
+                }
+            } else {
+                debugPrint("No valid http response")
+            }
+        } catch {
+            debugPrint("Error calling \(Constants.JAVA_CHAMPIONS_PR_URL). Error: \(error.localizedDescription)")
+        }
+    }
 }
