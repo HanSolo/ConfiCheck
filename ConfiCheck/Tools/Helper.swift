@@ -23,7 +23,7 @@ public struct Helper {
         var javaChampions : [JavaChampion] = []
         yaml.enumerateLines { (line, _) in
             if let result = try? Constants.YAML_NAME_REGEX.wholeMatch(in: line) {
-                let title     : String = String(result.1 != nil ? result.1.trimmingCharacters(in: .whitespaces) ?? "" : "")
+                let title     : String = String(result.1 != nil ? result.1!.trimmingCharacters(in: .whitespaces) : "")
                 let firstName : String = "\(String(result.2).trimmingCharacters(in: .whitespaces))\(result.3 != nil ? " \(result.3 ?? "")" : "")"
                 let lastName  : String = "\(result.4 != nil ? "\(result.4 ?? "")" : "")\(result.5 != nil ? " \(result.5 ?? "")" : "")\(result.6 != nil ? " \(result.6 ?? "")" : "")\(" \(result.7)")".trimmingCharacters(in: .whitespaces)
                 javaChampions.append(JavaChampion(title: title, firstName: firstName, lastName: lastName))

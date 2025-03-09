@@ -65,77 +65,86 @@ struct ContentView: View {
                 Divider()
                     .overlay(.secondary)
                     .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
-                
-                if self.model.networkMonitor.isConnected {
-                    NavigationStack {
-                        List {
-                            ForEach(self.model.filteredConferences.keys.sorted(), id: \.self) { month in
-                                Section(isExpanded: Binding<Bool> (
-                                    get: {
-                                        return isExpanded.contains(month)
-                                    },
-                                    set: { isExpanding in
-                                        if isExpanding {
-                                            isExpanded.insert(month)
-                                        } else {
-                                            isExpanded.remove(month)
-                                        }
-                                    }
-                                ),
-                                content: {
-                                    ForEach(self.model.filteredConferences[month]!.sorted(by: { $0.date < $1.date })) { conference in
-                                        ConferenceView(conference: conference)
-                                            .alignmentGuide(.listRowSeparatorLeading) { d in
-                                                d[.leading]
-                                            }
-                                            .alignmentGuide(.listRowSeparatorTrailing) { d in
-                                                d[.trailing]
-                                            }
-                                    }
-                                },
-                                header: {
-                                    HStack {
-                                        Text("\(formatter.monthSymbols[month-1].capitalized)")
-                                        Text("\(self.model.filteredConferences[month]!.count > 0 ? "( \(self.model.filteredConferences[month]!.count) )" : "")")
-                                            .foregroundStyle(.secondary)
-                                        
-                                    }
-                                }
-                                )
-                                .font(.system(size: 16, weight: .regular, design: .rounded))
-                                .listRowBackground(Color(.systemGray6))
-                                .listRowSeparator(.automatic)
-                                .listRowSeparatorTint(.secondary)
-                                .listRowSpacing(0)
-                                .accentColor(Color(.systemGray2))
-                            }
-                        }
-                        .scrollContentBackground(.hidden)
-                        .onAppear {
-                            self.isExpanded.insert(calendar.component(.month, from: Date.now))
-                        }
-                        .refreshable {
-                            updateAll()
-                        }
-                        .listStyle(.sidebar)
-                        .navigationTitle("Conferences")
-                        .searchable(text: $searchText, placement: .automatic, prompt: "Search for conference...")
-                        .textInputAutocapitalization(.never)
-                        .toolbarTitleDisplayMode(.inline)
-                    }
-                } else {
+                                
+                HStack {
                     Spacer()
-                    VStack(spacing: 20) {
-                        Text("O F F L I N E")
-                            .font(.system(size: 48, weight: .medium, design: .rounded))
-                            .foregroundStyle(.primary)
-                        Text("You need to be online\nto see the conferences")
-                            .font(.system(size: 24, weight: .thin, design: .rounded))
-                            .foregroundStyle(.secondary)
-                    }
+                    Text("OFFLINE")
+                        .font(.system(size: 8))
+                        .padding(EdgeInsets(top: 2, leading: 5, bottom: 2, trailing: 5))
+                        .foregroundStyle(.white)
+                        .background(
+                            ZStack {
+                                RoundedRectangle(
+                                    cornerRadius: 5,
+                                    style       : .continuous
+                                )
+                                .fill(.red)
+                                RoundedRectangle(
+                                    cornerRadius: 5,
+                                    style       : .continuous
+                                )
+                                .stroke(.red, lineWidth: 1)
+                            }
+                        )
+                        .opacity(self.model.networkMonitor.isConnected ? 0.0 : 1.0)
                     Spacer()
                 }
-                
+                NavigationStack {
+                    List {
+                        ForEach(self.model.filteredConferences.keys.sorted(), id: \.self) { month in
+                            Section(isExpanded: Binding<Bool> (
+                                get: {
+                                    return isExpanded.contains(month)
+                                },
+                                set: { isExpanding in
+                                    if isExpanding {
+                                        isExpanded.insert(month)
+                                    } else {
+                                        isExpanded.remove(month)
+                                    }
+                                }
+                            ),
+                            content: {
+                                ForEach(self.model.filteredConferences[month]!.sorted(by: { $0.date < $1.date })) { conference in
+                                    ConferenceView(conference: conference)
+                                        .alignmentGuide(.listRowSeparatorLeading) { d in
+                                            d[.leading]
+                                        }
+                                        .alignmentGuide(.listRowSeparatorTrailing) { d in
+                                            d[.trailing]
+                                        }
+                                }
+                            },
+                            header: {
+                                HStack {
+                                    Text("\(formatter.monthSymbols[month-1].capitalized)")
+                                    Text("\(self.model.filteredConferences[month]!.count > 0 ? "( \(self.model.filteredConferences[month]!.count) )" : "")")
+                                        .foregroundStyle(.secondary)
+                                    
+                                }
+                            }
+                            )
+                            .font(.system(size: 16, weight: .regular, design: .rounded))
+                            .listRowBackground(Color(.systemGray6))
+                            .listRowSeparator(.automatic)
+                            .listRowSeparatorTint(.secondary)
+                            .listRowSpacing(0)
+                            .accentColor(Color(.systemGray2))
+                        }
+                    }
+                    .scrollContentBackground(.hidden)
+                    .onAppear {
+                        self.isExpanded.insert(calendar.component(.month, from: Date.now))
+                    }
+                    .refreshable {
+                        updateAll()
+                    }
+                    .listStyle(.sidebar)
+                    .navigationTitle("Conferences")
+                    .searchable(text: $searchText, placement: .automatic, prompt: "Search for conference...")
+                    .textInputAutocapitalization(.never)
+                    .toolbarTitleDisplayMode(.inline)
+                }
                 
                 Divider()
                     .overlay(.secondary)

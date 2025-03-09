@@ -63,7 +63,7 @@ struct ConfiCheckWidgetEntryView : View {
     
     var body: some View {
         let sorted   : [Conference] = Array(self.entry.conferences).sorted(by: { lhs, rhs in
-            return rhs.date < lhs.date
+            return rhs.date > lhs.date
         })
         let count    : Int          = sorted.count
         let fontSize : Double       = count > 6 ? 10 : 12

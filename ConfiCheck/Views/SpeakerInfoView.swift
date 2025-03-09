@@ -199,6 +199,7 @@ struct SpeakerInfoView: View {
                             .foregroundStyle(.primary)
                             .multilineTextAlignment(.leading)
                             .accentColor(.accentColor)
+                            .autocapitalization(.none)
                     }
                     .listRowBackground(self.colorScheme == .dark ? Color.black : Color.white)
                                     
