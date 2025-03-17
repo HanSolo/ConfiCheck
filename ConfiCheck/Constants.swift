@@ -34,7 +34,7 @@ public struct Constants {
     public static let EVENT_ITEM_CITY_REGEX            : Regex  = /([A-Za-z0-9\w\.\-\s]+),/
     public static let EVENT_ITEM_COUNTRY_REGEX         : Regex  = /(@\s([a-zA-Z\s]+)\(([a-zA-Z\s-]+)\))/
     public static let EVENT_ITEM_DATE_REGEX            : Regex  = /(\s-\s(([A-Za-z]{3})\s([A-Za-z]{3})\s([0-9]{1,2})\s([0-9]{4})))/
-    public static let YAML_NAME_REGEX                  : Regex  = /^\s+\-\s+name:\s+(Prof.\s?Dr.\s|Dr.\s?Dr.\s|Dr\.\s|Prof\.\s|Phd\.\s)?([a-zA-ZäüöÄÜÖßéÉáÁóÓíÍèÈàÀòÒìÌêÊâÂôÔîÎ\-]+)\s?([a-zA-ZäüöÄÜÖßéÉáÁóÓíÍèÈàÀòÒìÌêÊâÂôÔîÎ\-]+)?\s?([a-zA-ZäüöÄÜÖßéÉáÁóÓíÍèÈàÀòÒìÌêÊâÂôÔîÎ\-]+)?\s?([a-zA-ZäüöÄÜÖßéÉáÁóÓíÍèÈàÀòÒìÌêÊâÂôÔîÎ\-]+)?\s?([a-zA-ZäüöÄÜÖßéÉáÁóÓíÍèÈàÀòÒìÌêÊâÂôÔîÎ\-]+)?\s+([a-zA-ZäüöÄÜÖßéÉáÁóÓíÍèÈàÀòÒìÌêÊâÂôÔîÎ\-]+)$/
+    public static let YAML_NAME_REGEX                  : Regex  = /^\s+\-\s+name:\s+(Prof.\s?Dr.\s|Dr.\s?Dr.\s|Dr\.\s|Prof\.\s|Phd\.\s)?([a-zA-ZäüöÄÜÖßéÉáÁóÓíÍèÈàÀòÒìÌêÊâÂôÔîÎÚúÙùÛûçčåÅïÏ\-]+)\s?([a-zA-ZäüöÄÜÖßéÉáÁóÓíÍèÈàÀòÒìÌêÊâÂôÔîÎÚúÙùÛûçčåÅïÏ\-]+)?\s?([a-zA-ZäüöÄÜÖßéÉáÁóÓíÍèÈàÀòÒìÌêÊâÂôÔîÎÚúÙùÛûçčåÅïÏ\-]+)?\s?([a-zA-ZäüöÄÜÖßéÉáÁóÓíÍèÈàÀòÒìÌêÊâÂôÔîÎÚúÙùÛûçčåÅïÏ\-]+)?\s?([a-zA-ZäüöÄÜÖßéÉáÁóÓíÍèÈàÀòÒìÌêÊâÂôÔîÎÚúÙùÛûçčåÅïÏ\-]+)?\s+([a-zA-ZäüöÄÜÖßéÉáÁóÓíÍèÈàÀòÒìÌêÊâÂôÔîÎÚúÙùÛûçčåÅïÏ\-]+)$/
     
     public static let CITY_DELIMITER                   : String = ","
     
