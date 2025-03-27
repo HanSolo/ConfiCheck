@@ -369,7 +369,7 @@ public struct Helper {
     static func conferencesToJson(conferences: [ConferenceItem]) -> String {
         var jsonTxt : String = "["
         for conference in conferences {                        
-            jsonTxt += "{\"name\":\"\(conference.name)\",\"date\":\(conference.date.timeIntervalSince1970),\"cfp\":\(getDatesFromJavaConferenceDate(date: conference.cfpDate ?? "").0?.endOfDay().timeIntervalSince1970 ?? 0),\"country\":\"\(conference.country)\"},"
+            jsonTxt += "{\"name\":\"\(conference.name)\",\"date\":\(conference.date.timeIntervalSince1970),\"cfp\":\(getDatesFromJavaConferenceDate(date: conference.cfpDate ?? "").0?.endOfDay().timeIntervalSince1970 ?? 0),\"country\":\"\(conference.country)\",\"days\":\(conference.days)},"
         }
         if conferences.count > 0 { jsonTxt.removeLast() }
         jsonTxt += "]"

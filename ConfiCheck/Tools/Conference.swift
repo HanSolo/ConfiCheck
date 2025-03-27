@@ -12,6 +12,7 @@ struct Conference : Identifiable {
     let date    : Date
     let cfp     : Date
     let country : String
+    let days    : Double
     
     
     var id: String {

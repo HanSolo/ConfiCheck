@@ -77,6 +77,7 @@ struct ConfiCheckWidgetEntryView : View {
                     Text("Conferences this month")
                         .font(.system(size: 12))
                     ForEach(Array(sorted)) { conference in
+                        let outdated : Bool = conference.date.addingTimeInterval(conference.days * Constants.SECONDS_PER_DAY) < Date.now
                         HStack {
                             let isoInfo : IsoCountryInfo? = IsoCountryCodes.searchByName(conference.country)
                             let flag    : String          = isoInfo?.flag ?? ""
@@ -94,13 +95,15 @@ struct ConfiCheckWidgetEntryView : View {
                             Spacer()
                             Text(conference.name)
                                 .font(.system(size: fontSize, weight: .medium, design: .rounded))
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(outdated ? .secondary : .primary)
+                                .strikethrough(outdated)
                                 .truncationMode(.tail)
                                 .allowsTightening(true)
                                 .lineLimit(1)
                             Text(dateFormatter.string(from: conference.date) )
                                 .font(.system(size: fontSize, weight: .medium, design: .rounded))
-                                .foregroundStyle(.primary)
+                                .foregroundStyle(outdated ? .secondary : .primary)
+                                .strikethrough(outdated)
                         }
                     }
                     Spacer()
@@ -125,6 +128,7 @@ struct ConfiCheckWidgetEntryView : View {
                     HStack(alignment: .top, spacing: 20) {
                         VStack(spacing: 2) {
                             ForEach(Array(left)) { conference in
+                                let outdated : Bool = conference.date.addingTimeInterval(conference.days * Constants.SECONDS_PER_DAY) < Date.now
                                 HStack {
                                     let isoInfo : IsoCountryInfo? = IsoCountryCodes.searchByName(conference.country)
                                     let flag    : String          = isoInfo?.flag ?? ""
@@ -140,21 +144,24 @@ struct ConfiCheckWidgetEntryView : View {
                                             .padding(EdgeInsets(top: 2, leading: 2, bottom: 2, trailing: 2))
                                     }
                                     Spacer()
-                                    Text(conference.name)
-                                        .font(.system(size: fontSize, weight: .medium, design: .rounded))
-                                        .foregroundStyle(.primary)
-                                        .truncationMode(.tail)
-                                        .allowsTightening(true)
-                                        .lineLimit(1)
-                                    Text(dateFormatter.string(from: conference.date) )
-                                        .font(.system(size: fontSize, weight: .medium, design: .rounded))
-                                        .foregroundStyle(.primary)
+                                        Text(conference.name)
+                                            .font(.system(size: fontSize, weight: .medium, design: .rounded))
+                                            .foregroundStyle(outdated ? .secondary : .primary)
+                                            .strikethrough(outdated)
+                                            .truncationMode(.tail)
+                                            .allowsTightening(true)
+                                            .lineLimit(1)
+                                        Text(dateFormatter.string(from: conference.date) )
+                                            .font(.system(size: fontSize, weight: .medium, design: .rounded))
+                                            .foregroundStyle(outdated ? .secondary : .primary)
+                                            .strikethrough(outdated)
                                 }
                                 //Spacer()
                             }
                         }
                         VStack(spacing: 2) {
                             ForEach(Array(right)) { conference in
+                                let outdated : Bool = conference.date.addingTimeInterval(conference.days * Constants.SECONDS_PER_DAY) < Date.now
                                 HStack {
                                     let isoInfo : IsoCountryInfo? = IsoCountryCodes.searchByName(conference.country)
                                     let flag    : String          = isoInfo?.flag ?? ""
@@ -172,13 +179,15 @@ struct ConfiCheckWidgetEntryView : View {
                                     Spacer()
                                     Text(conference.name)
                                         .font(.system(size: fontSize, weight: .medium, design: .rounded))
-                                        .foregroundStyle(.primary)
+                                        .foregroundStyle(outdated ? .secondary : .primary)
+                                        .strikethrough(outdated)
                                         .truncationMode(.tail)
                                         .allowsTightening(true)
                                         .lineLimit(1)
                                     Text(dateFormatter.string(from: conference.date) )
                                         .font(.system(size: fontSize, weight: .medium, design: .rounded))
-                                        .foregroundStyle(.primary)
+                                        .foregroundStyle(outdated ? .secondary : .primary)
+                                        .strikethrough(outdated)
                                 }
                                 //Spacer()
                             }
@@ -197,6 +206,7 @@ struct ConfiCheckWidgetEntryView : View {
                                 .font(.system(size: 13))
                         } else {
                             ForEach(Array(sorted)) { conference in
+                                let outdated : Bool = conference.date.addingTimeInterval(conference.days * Constants.SECONDS_PER_DAY) < Date.now
                                 HStack {
                                     let isoInfo : IsoCountryInfo? = IsoCountryCodes.searchByName(conference.country)
                                     let flag    : String          = isoInfo?.flag ?? ""
@@ -214,13 +224,15 @@ struct ConfiCheckWidgetEntryView : View {
                                     Spacer()
                                     Text(conference.name)
                                         .font(.system(size: fontSize, weight: .medium, design: .rounded))
-                                        .foregroundStyle(.primary)
+                                        .foregroundStyle(outdated ? .secondary : .primary)
+                                        .strikethrough(outdated)
                                         .truncationMode(.tail)
                                         .allowsTightening(true)
                                         .lineLimit(1)
                                     Text(dateFormatter.string(from: conference.date) )
                                         .font(.system(size: fontSize, weight: .medium, design: .rounded))
-                                        .foregroundStyle(.primary)
+                                        .foregroundStyle(outdated ? .secondary : .primary)
+                                        .strikethrough(outdated)
                                 }
                             }
                             Spacer()

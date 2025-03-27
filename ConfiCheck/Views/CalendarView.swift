@@ -10,8 +10,8 @@ import CoreGraphics
 
 
 struct CalendarView: View {
-    @Environment(\.colorScheme)  private var colorScheme
-    @EnvironmentObject           private var model             : ConfiModel
+    @Environment(\.colorScheme) private var colorScheme
+    @EnvironmentObject          private var model : ConfiModel
         
     private let calendar      : Calendar      = Calendar.current
     private let dateFormatter : DateFormatter = {
@@ -72,7 +72,8 @@ struct CalendarView: View {
                     let month      : Int    = calendar.component(.month, from: date)
                     let startOfDay : Double = calendar.startOfDay(for: date).timeIntervalSince1970
                     var confCount  : Double = 0.0
-                    for conference in self.model.conferencesPerContinent[month] ?? [] {
+                    //for conference in self.model.conferencesPerContinent[month] ?? [] {
+                    for conference in self.model.filteredConferences[month] ?? [] {
                         let startDate : Double = calendar.startOfDay(for: conference.date).timeIntervalSince1970
                         let length    : Double = tickStepX * conference.days
                         if startDate >= startOfDay && startDate + Constants.SECONDS_PER_DAY <= startOfDay + Constants.SECONDS_PER_DAY {

@@ -13,6 +13,7 @@ class JsonData: Codable {
     var date    : Double?
     var cfp     : Double?
     var country : String?
+    var days    : Double?
 
     
     private enum CodingKeys: String, CodingKey {
@@ -20,6 +21,7 @@ class JsonData: Codable {
         case date    = "date"
         case cfp     = "cfp"
         case country = "country"
+        case days    = "days"
     }
 
     required init(from decoder: Decoder) throws {
@@ -28,6 +30,7 @@ class JsonData: Codable {
         date    = try? container.decode(Double.self, forKey: .date)
         cfp     = try? container.decode(Double.self, forKey: .cfp)
         country = try? container.decode(String.self, forKey: .country)
+        days    = try? container.decode(Double.self, forKey: .days)
     }
 
     func encode(to encoder: Encoder) throws {
@@ -36,12 +39,13 @@ class JsonData: Codable {
         try? container.encode(date,    forKey: .date)
         try? container.encode(cfp,     forKey: .cfp)
         try? container.encode(country, forKey: .country)
+        try? container.encode(days,    forKey: .days)
     }
     
   
     public func getConference() -> Conference? {
         if nil == name { return nil }
-        let conference : Conference = Conference(name: name!, date: Date.init(timeIntervalSince1970: date!), cfp: Date.init(timeIntervalSince1970: cfp!), country: country!)
+        let conference : Conference = Conference(name: name!, date: Date.init(timeIntervalSince1970: date!), cfp: Date.init(timeIntervalSince1970: cfp!), country: country!, days: days!)
         return conference
     }
 }
