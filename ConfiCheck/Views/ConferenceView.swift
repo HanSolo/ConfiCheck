@@ -42,7 +42,8 @@ struct ConferenceView: View, Identifiable {
                 // Conference Name
                 Text(conference.name)
                     .font(.system(size: 16, weight: .medium, design: .rounded))
-                    .foregroundStyle(.primary)
+                    .foregroundStyle(self.isOver() ? .secondary : .primary)
+                    .strikethrough(self.isOver())
                 
                 Spacer()
                 
@@ -64,7 +65,6 @@ struct ConferenceView: View, Identifiable {
                 if conference.days > 1 {
                     Text(verbatim: "\(self.formatter.string(from: conference.date)) (\(String(format: "%.0f", conference.days)) days)")
                         .font(.system(size: 12, weight: .regular, design: .rounded))
-                        .foregroundStyle(.primary)
                 } else {
                     Text(verbatim: "\(self.formatter.string(from: conference.date))")
                         .font(.system(size: 12, weight: .regular, design: .rounded))
@@ -281,8 +281,12 @@ struct ConferenceView: View, Identifiable {
         }
     }
     
-    func deleteProposalFromConference(at offsets: IndexSet) {        
+    func deleteProposalFromConference(at offsets: IndexSet) -> Void {
         self.conference.removeProposal(proposal: self.conference.proposals![offsets.first!])
+    }
+    
+    private func isOver() -> Bool {
+        return self.conference.date.addingTimeInterval(self.conference.days * Constants.SECONDS_PER_DAY) < Date.now
     }
     
     // Request Calendar access
