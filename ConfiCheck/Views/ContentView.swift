@@ -410,10 +410,18 @@ struct ContentView: View {
             
             let javaConferences  : [JavaConference] = await RestController.fetchJavaConferences()
             var conferencesFound : [ConferenceItem] = []
+            let now  : Date = Date.now
+            let year : Int  = now.getYear()
             for javaConference in javaConferences {
                 let conference : ConferenceItem = JavaConference.convertToConferenceItem(javaConference: javaConference)
                 if javaConference.date == nil { continue }
-                conferencesFound.append(conference)
+                if year == conference.date.getYear() {
+                    conferencesFound.append(conference)
+                } else if year > conference.date.getYear() && conference.date.getMonth() > 9 {
+                    conferencesFound.append(conference)
+                } else if year < conference.date.getYear() && conference.date.getMonth() < 6 {
+                    conferencesFound.append(conference)
+                }
             }
             for conference in conferencesFound {
                 if self.model.conferences.contains(where: { $0.id == conference.id }) {
