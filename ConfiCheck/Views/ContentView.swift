@@ -419,7 +419,7 @@ struct ContentView: View {
                     conferencesFound.append(conference)
                 } else if year > conference.date.getYear() && conference.date.getMonth() > 9 {
                     conferencesFound.append(conference)
-                } else if year < conference.date.getYear() && conference.date.getMonth() < 6 {
+                } else if year < conference.date.getYear() && conference.date.getMonth() < 7 {
                     conferencesFound.append(conference)
                 }
             }
