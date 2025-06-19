@@ -484,10 +484,18 @@ struct ContentView: View {
         self.model.conferences.removeAll()
         let requestConferences = FetchDescriptor<ConferenceItem>()
         let conferenceItems : [ConferenceItem] = try! context.fetch(requestConferences)
+        let now  : Date = Date.now
+        let year : Int  = now.getYear()
         if !conferenceItems.isEmpty {
             if self.model.conferences.isEmpty {
                 for conference in conferenceItems {
-                    self.model.conferences.append(conference)                    
+                    if year == conference.date.getYear() {
+                        self.model.conferences.append(conference)
+                    } else if year > conference.date.getYear() && conference.date.getMonth() > 9 {
+                        self.model.conferences.append(conference)
+                    } else if year < conference.date.getYear() && conference.date.getMonth() < 7 {
+                        self.model.conferences.append(conference)
+                    }
                 }
             }
         }
