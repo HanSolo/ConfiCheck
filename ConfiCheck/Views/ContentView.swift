@@ -417,8 +417,6 @@ struct ContentView: View {
                 if javaConference.date == nil { continue }
                 if year == conference.date.getYear() {
                     conferencesFound.append(conference)
-                } else if year > conference.date.getYear() && conference.date.getMonth() > 9 {
-                    conferencesFound.append(conference)
                 } else if year < conference.date.getYear() && conference.date.getMonth() < 7 {
                     conferencesFound.append(conference)
                 }
@@ -490,8 +488,6 @@ struct ContentView: View {
             if self.model.conferences.isEmpty {
                 for conference in conferenceItems {
                     if year == conference.date.getYear() {
-                        self.model.conferences.append(conference)
-                    } else if year > conference.date.getYear() && conference.date.getMonth() > 9 {
                         self.model.conferences.append(conference)
                     } else if year < conference.date.getYear() && conference.date.getMonth() < 7 {
                         self.model.conferences.append(conference)
