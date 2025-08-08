@@ -40,7 +40,7 @@ struct ConferenceView: View, Identifiable {
         VStack(spacing: 12) {
             HStack {
                 // Conference Name
-                Text(conference.name)
+                Text("\(conference.name) \(conference.date.getYear(), format: .number.grouping(.never))")
                     .font(.system(size: 16, weight: .medium, design: .rounded))
                     .foregroundStyle(self.isOver() ? .secondary : .primary)
                     .strikethrough(self.isOver())
