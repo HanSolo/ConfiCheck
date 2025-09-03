@@ -71,15 +71,16 @@ final class ConferenceItem: Identifiable, Equatable, Hashable, ObservableObject 
     
     
     var id: String {
-        return "\(name)_\(url)"
+        return "\(name)_\(url)_\(cfpDate ?? "-")"
     }
 
     func hash(into hasher: inout Hasher) {
         hasher.combine(url)
         hasher.combine(name)
+        hasher.combine(cfpDate)
     }
     
     static func == (lhs: ConferenceItem, rhs: ConferenceItem) -> Bool {
-        return lhs.name == rhs.name && lhs.url == rhs.url
+        return lhs.name == rhs.name && lhs.url == rhs.url && lhs.cfpDate == rhs.cfpDate
     }
 }

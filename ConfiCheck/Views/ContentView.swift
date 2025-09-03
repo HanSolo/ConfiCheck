@@ -13,17 +13,17 @@ import EventKit
 
 struct ContentView: View {
     @Environment(\.modelContext) private var context
-    @EnvironmentObject           private var model              : ConfiModel
-    @State                       private var isExpanded         : Set<Int>       = []
-    @State                       private var continent          : Int            = Properties.instance.selectedContinent!
-    @State                       private var filter             : Int            = 0
-    @State                       private var speakerInfoVisible : Bool           = false
-    @State                       private var proposalsVisible   : Bool           = false
-    @State                       private var updating           : Bool           = false
-    @State                       private var searchText         : String         = ""
-    @State                       private var scrollPosition     : ScrollPosition = ScrollPosition()
-    private let formatter                                       : DateFormatter  = DateFormatter()
-    private let calendar                                        : Calendar       = .current
+    @EnvironmentObject           private var model               : ConfiModel
+    @State                       private var isExpanded          : Set<Int>       = []
+    @State                       private var continent           : Int            = Properties.instance.selectedContinent!
+    @State                       private var filter              : Int            = 0
+    @State                       private var speakerInfoVisible  : Bool           = false
+    @State                       private var proposalsVisible    : Bool           = false
+    @State                       private var updating            : Bool           = false
+    @State                       private var searchText          : String         = ""
+    @State                       private var scrollPosition      : ScrollPosition = ScrollPosition()
+    private let formatter                                        : DateFormatter  = DateFormatter()
+    private let calendar                                         : Calendar       = .current
     private let dateFormatter: DateFormatter = {
         let formatter : DateFormatter = DateFormatter()
         formatter.setLocalizedDateFormatFromTemplate("d M yyyy")
@@ -180,6 +180,17 @@ struct ContentView: View {
                     ShareLink("Export", item: getCSVText())
                         .font(.system(size: 14, weight: .light, design: .rounded))
                         .accentColor(.primary)
+                    
+                    Spacer()
+                    
+                    Button(action: {
+                        resetAllItems()
+                    }) {
+                        Image(systemName: "arrow.trianglehead.2.counterclockwise").imageScale(.medium)
+                            .foregroundColor(.primary)
+                    }
+                    .buttonStyle(.bordered)
+                    .font(.system(size: 14, weight: .light, design: .rounded))
                     
                     Spacer()
                     
@@ -524,6 +535,7 @@ struct ContentView: View {
         do {
             try context.delete(model: ConferenceItem.self)
             debugPrint("Reset all items")
+            updateAll()
         } catch {
             debugPrint("Error resetting all items. \(error)")
         }
