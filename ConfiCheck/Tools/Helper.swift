@@ -77,26 +77,36 @@ public struct Helper {
                 return (calendar.date(from: dateComponents1), calendar.date(from: dateComponents2))
             }
         } else {
-            return (nil,nil)
+            let iso8601Formatter : ISO8601DateFormatter = ISO8601DateFormatter()
+            iso8601Formatter.formatOptions = [
+                .withFullDate,
+                .withFullTime,
+                .withDay,
+                .withMonth,
+                .withYear
+            ]
+            let date1            : Date?                = iso8601Formatter.date(from: date)
+            let date2            : Date?                = iso8601Formatter.date(from: date)
+            return (nil == date1 ? nil : date1, nil == date2 ? nil : date2)
         }
         return (nil,nil)
     }
     
     public static func getMonthFromName(month: String) -> Int {
         switch month {
-        case "january", "jan"   : return 1
-        case "february", "feb"  : return 2
-        case "march", "mar"     : return 3
-        case "april", "apr"     : return 4
-        case "may"              : return 5
-        case "june", "jun"      : return 6
-        case "july", "jul"      : return 7
-        case "august", "aug"    : return 8
-        case "september", "sep" : return 9
-        case "october", "oct"   : return 10
-        case "november", "nov"  : return 11
-        case "december", "dec"  : return 12
-        default                 : return -1
+            case "january", "jan"   : return 1
+            case "february", "feb"  : return 2
+            case "march", "mar"     : return 3
+            case "april", "apr"     : return 4
+            case "may"              : return 5
+            case "june", "jun"      : return 6
+            case "july", "jul"      : return 7
+            case "august", "aug"    : return 8
+            case "september", "sep" : return 9
+            case "october", "oct"   : return 10
+            case "november", "nov"  : return 11
+            case "december", "dec"  : return 12
+            default                 : return -1
         }
     }
     
