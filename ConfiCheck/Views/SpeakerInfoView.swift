@@ -58,7 +58,7 @@ struct SpeakerInfoView: View {
                         Label("Share Bio", systemImage: "square.and.arrow.up")
                     }
                     .padding()
-                    .buttonStyle(.bordered)
+                    .buttonStyle(.glass)
                     .foregroundStyle(.primary)
                     
                     Spacer()
@@ -76,7 +76,7 @@ struct SpeakerInfoView: View {
                         dismiss()
                     }
                     .padding()
-                    .buttonStyle(.bordered)
+                    .buttonStyle(.glass)
                     .foregroundStyle(.primary)
                 }
                 

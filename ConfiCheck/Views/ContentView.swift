@@ -171,7 +171,7 @@ struct ContentView: View {
                     Button("Speaker Info") {
                         self.speakerInfoVisible.toggle()
                     }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(.glass)
                     .foregroundStyle(.primary)
                     .font(.system(size: 14, weight: .light, design: .rounded))
                     
@@ -189,7 +189,7 @@ struct ContentView: View {
                         Image(systemName: "arrow.trianglehead.2.counterclockwise").imageScale(.medium)
                             .foregroundColor(.primary)
                     }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(.glass)
                     .font(.system(size: 14, weight: .light, design: .rounded))
                     
                     Spacer()
@@ -197,7 +197,7 @@ struct ContentView: View {
                     Button("Proposals") {
                         self.proposalsVisible.toggle()
                     }
-                    .buttonStyle(.bordered)
+                    .buttonStyle(.glass)
                     .foregroundStyle(.primary)
                     .font(.system(size: 14, weight: .light, design: .rounded))
                 }

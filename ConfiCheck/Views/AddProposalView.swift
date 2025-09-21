@@ -53,7 +53,7 @@ struct AddProposalView: View {
                 }
                 .padding()
                 .disabled(!isFormValid)
-                .buttonStyle(.bordered)
+                .buttonStyle(.glass)
                 .foregroundStyle(.primary)
                 
                 Spacer()
@@ -62,7 +62,7 @@ struct AddProposalView: View {
                     dismiss()
                 }
                 .padding()
-                .buttonStyle(.bordered)
+                .buttonStyle(.glass)
                 .foregroundStyle(.primary)
             }
             

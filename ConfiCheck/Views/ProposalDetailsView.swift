@@ -94,7 +94,7 @@ struct ProposalDetailsView: View {
             }
             .listRowBackground(self.colorScheme == .dark ? Color.black : Color.white)
             .foregroundStyle(self.colorScheme == .dark ? .white : .black)
-            .buttonStyle(.bordered)
+            .buttonStyle(.glass)
         }
         .scrollContentBackground(.hidden)
         .background(self.colorScheme == .dark ? .black : .white)

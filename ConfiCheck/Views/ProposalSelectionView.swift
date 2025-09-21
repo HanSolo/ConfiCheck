@@ -40,7 +40,7 @@ struct ProposalSelectionView: View {
                         dismiss()
                     }
                     .padding()
-                    .buttonStyle(.bordered)
+                    .buttonStyle(.glass)
                     .foregroundStyle(.primary)
                 }
             })

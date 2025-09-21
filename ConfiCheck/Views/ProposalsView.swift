@@ -29,7 +29,7 @@ struct ProposalsView: View {
                         Button("Add") {
                             self.addProposalViewVisible = true
                         }
-                        .buttonStyle(.bordered)
+                        .buttonStyle(.glass)
                         .foregroundStyle(.primary)
                         
                         Spacer()
@@ -37,7 +37,7 @@ struct ProposalsView: View {
                         Button("Close") {
                             dismiss()
                         }
-                        .buttonStyle(.bordered)
+                        .buttonStyle(.glass)
                         .foregroundStyle(.primary)
                     }
                     .padding(EdgeInsets(top: 20, leading: 20, bottom: 20, trailing: 20))

@@ -228,7 +228,7 @@ struct ConferenceView: View, Identifiable {
                             .foregroundStyle(.secondary)
                             .font(.system(size: 16, weight: .light, design: .rounded))
                     }
-                    .buttonStyle(.plain)
+                    .buttonStyle(.glass)
                     .foregroundStyle(.primary)
                     .popover(isPresented: $proposalSelectionVisible) {
                         ProposalSelectionView(proposals: self.model.proposals)
