@@ -22,6 +22,7 @@ struct ContentView: View {
     @State                       private var updating            : Bool           = false
     @State                       private var searchText          : String         = ""
     @State                       private var scrollPosition      : ScrollPosition = ScrollPosition()
+    @State                       private var settingsVisible     : Bool           = false
     private let formatter                                        : DateFormatter  = DateFormatter()
     private let calendar                                         : Calendar       = .current
     private let dateFormatter: DateFormatter = {
@@ -177,17 +178,12 @@ struct ContentView: View {
                     
                     Spacer()
                     
-                    ShareLink("Export", item: getCSVText())
-                        .font(.system(size: 14, weight: .light, design: .rounded))
-                        .accentColor(.primary)
-                    
-                    Spacer()
-                    
                     Button(action: {
-                        resetAllItems()
+                        self.settingsVisible.toggle()
                     }) {
-                        Image(systemName: "arrow.trianglehead.2.counterclockwise").imageScale(.medium)
+                        Image(systemName: "line.3.horizontal").imageScale(.medium)
                             .foregroundColor(.primary)
+                            .padding(EdgeInsets(top: 4, leading: 0, bottom: 4, trailing: 0))
                     }
                     .buttonStyle(.glass)
                     .font(.system(size: 14, weight: .light, design: .rounded))
@@ -203,19 +199,37 @@ struct ContentView: View {
                 }
                 .padding(EdgeInsets(top: 5, leading: 20, bottom: 5, trailing: 20))
             }
+            .onChange(of: self.model.showUpcomingOnly) {
+                updateList()
+            }
             .onChange(of: self.continent) {
                 Properties.instance.selectedContinent = self.continent
                 let selectedContinent : Constants.Continent = Constants.Continent.allCases[self.continent]
-                self.model.conferencesPerContinent.removeAll();
-                if self.continent == 0 {
-                    self.model.conferencesPerContinent = self.model.conferencesPerMonth
+                if self.model.showUpcomingOnly {
+                    self.model.upcomingConferencesPerContinent.removeAll();
+                    if self.continent == 0 {
+                        self.model.upcomingConferencesPerContinent = self.model.upcomingConferencesPerMonth
+                    } else {
+                        for month in self.model.upcomingConferencesPerMonth.keys {
+                            if self.model.upcomingConferencesPerMonth[month]?.isEmpty ?? true { continue }
+                            self.model.upcomingConferencesPerContinent[month] = self.model.upcomingConferencesPerMonth[month]?.filter({
+                                let isoInfo : IsoCountryInfo? = IsoCountryCodes.searchByName($0.country)
+                                return isoInfo?.continent == selectedContinent.code
+                            })
+                        }
+                    }
                 } else {
-                    for month in self.model.conferencesPerMonth.keys {
-                        if self.model.conferencesPerMonth[month]?.isEmpty ?? true { continue }
-                        self.model.conferencesPerContinent[month] = self.model.conferencesPerMonth[month]?.filter({
-                            let isoInfo : IsoCountryInfo? = IsoCountryCodes.searchByName($0.country)
-                            return isoInfo?.continent == selectedContinent.code
-                        })
+                    self.model.conferencesPerContinent.removeAll();
+                    if self.continent == 0 {
+                        self.model.conferencesPerContinent = self.model.conferencesPerMonth
+                    } else {
+                        for month in self.model.conferencesPerMonth.keys {
+                            if self.model.conferencesPerMonth[month]?.isEmpty ?? true { continue }
+                            self.model.conferencesPerContinent[month] = self.model.conferencesPerMonth[month]?.filter({
+                                let isoInfo : IsoCountryInfo? = IsoCountryCodes.searchByName($0.country)
+                                return isoInfo?.continent == selectedContinent.code
+                            })
+                        }
                     }
                 }
                 self.isExpanded.removeAll()
@@ -223,62 +237,10 @@ struct ContentView: View {
                 updateList()
             }
             .onChange(of: self.filter) {
-                self.model.filteredConferences.removeAll()
-                switch self.filter {
-                case 0:
-                    self.model.filteredConferences = self.model.conferencesPerContinent
-                    self.isExpanded.removeAll()
-                    self.isExpanded.insert(calendar.component(.month, from: Date.now))
-                    break
-                case 1:
-                    for month in self.model.conferencesPerContinent.keys {
-                        for conference in self.model.conferencesPerContinent[month] ?? [] {
-                            if self.model.attendence.keys.contains(where: { $0 == conference.id }) {
-                                if self.model.attendence[conference.id] != 2 { continue }
-                                if !self.model.filteredConferences.keys.contains(month) {
-                                    self.model.filteredConferences[month] = []
-                                }
-                                self.model.filteredConferences[month]!.append(conference)
-                            }
-                        }
-                    }
-                    self.isExpanded.removeAll()
-                    for month in 1...12 {
-                        self.isExpanded.insert(month)
-                    }
-                    break
-                case 2:
-                    for month in self.model.conferencesPerContinent.keys {
-                        for conference in self.model.conferencesPerContinent[month] ?? [] {
-                            if self.model.attendence.keys.contains(where: { $0 == conference.id }) {
-                                if self.model.attendence[conference.id] != 1 { continue }
-                                if !self.model.filteredConferences.keys.contains(month) {
-                                    self.model.filteredConferences[month] = []
-                                }
-                                self.model.filteredConferences[month]!.append(conference)
-                            }
-                        }
-                    }
-                    self.isExpanded.removeAll()
-                    for month in 1...12 {
-                        self.isExpanded.insert(month)
-                    }
-                    break
-                case 3:
-                    for month in self.model.conferencesPerContinent.keys {
-                        if self.model.conferencesPerContinent[month]?.isEmpty ?? true { continue }
-                        self.model.filteredConferences[month] = self.model.conferencesPerContinent[month]?.filter({ $0.cfpDate != nil })
-                            .filter({ Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0 != nil })
-                            .filter({ Helper.isCfpOpen(date: Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0!) })
-                    }
-                    self.isExpanded.removeAll()
-                    for month in 1...12 {
-                        self.isExpanded.insert(month)
-                    }
-                    break
-                default:
-                    self.model.filteredConferences = self.model.conferencesPerContinent
-                    break
+                if self.model.showUpcomingOnly {
+                    filterForUpcoming()
+                } else {
+                    filterForAll()
                 }
             }
             .onChange(of: self.searchText) {
@@ -288,11 +250,17 @@ struct ContentView: View {
                     search()
                 }
             }
+            .onChange(of: self.model.triggerReset) {
+                resetAllItems()
+            }
             .sheet(isPresented: $speakerInfoVisible) {
                 SpeakerInfoView()
             }
             .sheet(isPresented: $proposalsVisible) {
                 ProposalsView()
+            }
+            .sheet(isPresented: $settingsVisible) {
+                SettingsView()
             }
             .task {
                 updateAll()
@@ -301,59 +269,8 @@ struct ContentView: View {
         }
     }
     
-    // Get CSV text of conferences you speak at
-    private func getCSVText() -> String {
-        if self.model.conferencesPerMonth.isEmpty { return "" }
-        var csvText : String = "\"Conference\",\"Date\",\"City\",\"Country\",\"Proposal(s)\"\n"
-        for month in self.model.conferencesPerContinent.keys {
-            for conference in self.model.conferencesPerContinent[month] ?? [] {
-                if self.model.attendence.keys.contains(where: { $0 == conference.id }) {
-                    if self.model.attendence[conference.id] != 2 { continue }
-                    csvText += "\"\(conference.name)\",\"\(dateFormatter.string(from: conference.date))\",\"\(conference.city)\",\"\(conference.country)\",\""
-                    if conference.proposals != nil && conference.proposals!.count > 0 {
-                        conference.proposals!.forEach({ (proposal) in
-                            if !proposal.title.isEmpty {
-                                csvText += "\(proposal.title)|"
-                            }
-                        })
-                    }
-                    if csvText.last == "|" { csvText.removeLast() }
-                    csvText += "\"\n"
-                }
-            }
-        }
-        return csvText
-    }
-    
-    // Filter list by search
-    private func search() {
-        guard !searchText.isEmpty else { return }
-        self.model.filteredConferences.removeAll()
-        for month in self.model.conferencesPerContinent.keys {
-            if self.model.conferencesPerContinent[month]?.isEmpty ?? true { continue }
-            self.model.filteredConferences[month] = self.model.conferencesPerContinent[month]?.filter({ $0.name.localizedCaseInsensitiveContains(self.searchText) })
-        }
-        self.model.filteredConferences.keys.sorted().forEach({ month in
-            self.isExpanded.insert(month)
-        })
-    }
-    
-    // Update list
-    private func updateList() -> Void {
-        let selectedContinent : Constants.Continent = Constants.Continent.allCases[self.continent]
-        self.model.conferencesPerContinent.removeAll();
-        if self.continent == 0 {
-            self.model.conferencesPerContinent = self.model.conferencesPerMonth
-        } else {
-            for month in self.model.conferencesPerMonth.keys {
-                if self.model.conferencesPerMonth[month]?.isEmpty ?? true { continue }
-                self.model.conferencesPerContinent[month] = self.model.conferencesPerMonth[month]?.filter({
-                    let isoInfo : IsoCountryInfo? = IsoCountryCodes.searchByName($0.country)
-                    return isoInfo?.continent == selectedContinent.code || isoInfo == nil
-                })
-            }
-        }
-        
+    // Filter for all conferences
+    private func filterForAll() {
         self.model.filteredConferences.removeAll()
         switch self.filter {
             case 0:
@@ -394,13 +311,13 @@ struct ContentView: View {
                 for month in 1...12 {
                     self.isExpanded.insert(month)
                 }
-            break
+                break
             case 3:
                 for month in self.model.conferencesPerContinent.keys {
                     if self.model.conferencesPerContinent[month]?.isEmpty ?? true { continue }
                     self.model.filteredConferences[month] = self.model.conferencesPerContinent[month]?.filter({ $0.cfpDate != nil })
-                                                                                                      .filter({ Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0 != nil })
-                                                                                                      .filter({ Helper.isCfpOpen(date: Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0!) })
+                        .filter({ Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0 != nil })
+                        .filter({ Helper.isCfpOpen(date: Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0!) })
                 }
                 self.isExpanded.removeAll()
                 for month in 1...12 {
@@ -409,6 +326,216 @@ struct ContentView: View {
                 break
             default:
                 self.model.filteredConferences = self.model.conferencesPerContinent
+                break
+        }
+    }
+    
+    private func filterForUpcoming() {
+        self.model.filteredConferences.removeAll()
+        switch self.filter {
+            case 0:
+                self.model.filteredConferences = self.model.upcomingConferencesPerContinent
+                self.isExpanded.removeAll()
+                self.isExpanded.insert(calendar.component(.month, from: Date.now))
+                break
+            case 1:
+                for month in self.model.upcomingConferencesPerContinent.keys {
+                    for conference in self.model.upcomingConferencesPerContinent[month] ?? [] {
+                        if self.model.attendence.keys.contains(where: { $0 == conference.id }) {
+                            if self.model.attendence[conference.id] != 2 { continue }
+                            if !self.model.filteredConferences.keys.contains(month) {
+                                self.model.filteredConferences[month] = []
+                            }
+                            self.model.filteredConferences[month]!.append(conference)
+                        }
+                    }
+                }
+                self.isExpanded.removeAll()
+                for month in 1...12 {
+                    self.isExpanded.insert(month)
+                }
+                break
+            case 2:
+                for month in self.model.upcomingConferencesPerContinent.keys {
+                    for conference in self.model.upcomingConferencesPerContinent[month] ?? [] {
+                        if self.model.attendence.keys.contains(where: { $0 == conference.id }) {
+                            if self.model.attendence[conference.id] != 1 { continue }
+                            if !self.model.filteredConferences.keys.contains(month) {
+                                self.model.filteredConferences[month] = []
+                            }
+                            self.model.filteredConferences[month]!.append(conference)
+                        }
+                    }
+                }
+                self.isExpanded.removeAll()
+                for month in 1...12 {
+                    self.isExpanded.insert(month)
+                }
+                break
+            case 3:
+                for month in self.model.upcomingConferencesPerContinent.keys {
+                    if self.model.upcomingConferencesPerContinent[month]?.isEmpty ?? true { continue }
+                    self.model.filteredConferences[month] = self.model.upcomingConferencesPerContinent[month]?.filter({ $0.cfpDate != nil })
+                        .filter({ Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0 != nil })
+                        .filter({ Helper.isCfpOpen(date: Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0!) })
+                }
+                self.isExpanded.removeAll()
+                for month in 1...12 {
+                    self.isExpanded.insert(month)
+                }
+                break
+            default:
+                self.model.filteredConferences = self.model.upcomingConferencesPerContinent
+                break
+        }
+    }
+    
+    
+    // Filter list by search
+    private func search() {
+        guard !searchText.isEmpty else { return }
+        self.model.filteredConferences.removeAll()
+        if self.model.showUpcomingOnly {
+            for month in self.model.upcomingConferencesPerContinent.keys {
+                if self.model.upcomingConferencesPerContinent[month]?.isEmpty ?? true { continue }
+                self.model.filteredConferences[month] = self.model.upcomingConferencesPerContinent[month]?.filter({ $0.name.localizedCaseInsensitiveContains(self.searchText) })
+            }
+        } else {
+            for month in self.model.conferencesPerContinent.keys {
+                if self.model.conferencesPerContinent[month]?.isEmpty ?? true { continue }
+                self.model.filteredConferences[month] = self.model.conferencesPerContinent[month]?.filter({ $0.name.localizedCaseInsensitiveContains(self.searchText) })
+            }
+        }
+        self.model.filteredConferences.keys.sorted().forEach({ month in
+            self.isExpanded.insert(month)
+        })
+    }
+    
+    // Update list
+    private func updateList() -> Void {
+        let selectedContinent : Constants.Continent = Constants.Continent.allCases[self.continent]
+        self.model.conferencesPerContinent.removeAll();
+        self.model.upcomingConferencesPerContinent.removeAll()
+        if self.continent == 0 {
+            self.model.conferencesPerContinent         = self.model.conferencesPerMonth
+            self.model.upcomingConferencesPerContinent = self.model.upcomingConferencesPerMonth
+        } else {
+            for month in self.model.conferencesPerMonth.keys {
+                if self.model.conferencesPerMonth[month]?.isEmpty ?? true { continue }
+                self.model.conferencesPerContinent[month] = self.model.conferencesPerMonth[month]?.filter({
+                    let isoInfo : IsoCountryInfo? = IsoCountryCodes.searchByName($0.country)
+                    return isoInfo?.continent == selectedContinent.code || isoInfo == nil
+                })
+            }
+            for month in self.model.upcomingConferencesPerMonth.keys {
+                if self.model.upcomingConferencesPerMonth[month]?.isEmpty ?? true { continue }
+                self.model.upcomingConferencesPerContinent[month] = self.model.upcomingConferencesPerMonth[month]?.filter({
+                    let isoInfo : IsoCountryInfo? = IsoCountryCodes.searchByName($0.country)
+                    return isoInfo?.continent == selectedContinent.code || isoInfo == nil
+                })
+            }
+        }
+        
+        self.model.filteredConferences.removeAll()
+        switch self.filter {
+            case 0:
+                if self.model.showUpcomingOnly {
+                    self.model.filteredConferences = self.model.upcomingConferencesPerContinent
+                } else {
+                    self.model.filteredConferences = self.model.conferencesPerContinent
+                }
+                self.isExpanded.removeAll()
+                self.isExpanded.insert(calendar.component(.month, from: Date.now))
+                break
+            case 1:
+                if self.model.showUpcomingOnly {
+                    for month in self.model.upcomingConferencesPerContinent.keys {
+                        for conference in self.model.upcomingConferencesPerContinent[month] ?? [] {
+                            if self.model.attendence.keys.contains(where: { $0 == conference.id }) {
+                                if self.model.attendence[conference.id] != 2 { continue }
+                                if !self.model.filteredConferences.keys.contains(month) {
+                                    self.model.filteredConferences[month] = []
+                                }
+                                self.model.filteredConferences[month]!.append(conference)
+                            }
+                        }
+                    }
+                } else {
+                    for month in self.model.conferencesPerContinent.keys {
+                        for conference in self.model.conferencesPerContinent[month] ?? [] {
+                            if self.model.attendence.keys.contains(where: { $0 == conference.id }) {
+                                if self.model.attendence[conference.id] != 2 { continue }
+                                if !self.model.filteredConferences.keys.contains(month) {
+                                    self.model.filteredConferences[month] = []
+                                }
+                                self.model.filteredConferences[month]!.append(conference)
+                            }
+                        }
+                    }
+                }
+                self.isExpanded.removeAll()
+                for month in 1...12 {
+                    self.isExpanded.insert(month)
+                }
+                break
+            case 2:
+                if self.model.showUpcomingOnly {
+                    for month in self.model.upcomingConferencesPerContinent.keys {
+                        for conference in self.model.upcomingConferencesPerContinent[month] ?? [] {
+                            if self.model.attendence.keys.contains(where: { $0 == conference.id }) {
+                                if self.model.attendence[conference.id] != 1 { continue }
+                                if !self.model.filteredConferences.keys.contains(month) {
+                                    self.model.filteredConferences[month] = []
+                                }
+                                self.model.filteredConferences[month]!.append(conference)
+                            }
+                        }
+                    }
+                } else {
+                    for month in self.model.conferencesPerContinent.keys {
+                        for conference in self.model.conferencesPerContinent[month] ?? [] {
+                            if self.model.attendence.keys.contains(where: { $0 == conference.id }) {
+                                if self.model.attendence[conference.id] != 1 { continue }
+                                if !self.model.filteredConferences.keys.contains(month) {
+                                    self.model.filteredConferences[month] = []
+                                }
+                                self.model.filteredConferences[month]!.append(conference)
+                            }
+                        }
+                    }
+                }
+                self.isExpanded.removeAll()
+                for month in 1...12 {
+                    self.isExpanded.insert(month)
+                }
+                break
+            case 3:
+                if self.model.showUpcomingOnly {
+                    for month in self.model.upcomingConferencesPerContinent.keys {
+                        if self.model.upcomingConferencesPerContinent[month]?.isEmpty ?? true { continue }
+                        self.model.filteredConferences[month] = self.model.upcomingConferencesPerContinent[month]?.filter({ $0.cfpDate != nil })
+                                                                                                                  .filter({ Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0 != nil })
+                                                                                                                   .filter({ Helper.isCfpOpen(date: Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0!) })
+                    }
+                } else {
+                    for month in self.model.conferencesPerContinent.keys {
+                        if self.model.conferencesPerContinent[month]?.isEmpty ?? true { continue }
+                        self.model.filteredConferences[month] = self.model.conferencesPerContinent[month]?.filter({ $0.cfpDate != nil })
+                                                                                                          .filter({ Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0 != nil })
+                                                                                                          .filter({ Helper.isCfpOpen(date: Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0!) })
+                    }
+                }
+                self.isExpanded.removeAll()
+                for month in 1...12 {
+                    self.isExpanded.insert(month)
+                }
+                break
+            default:
+                if self.model.showUpcomingOnly {
+                    self.model.filteredConferences = self.model.upcomingConferencesPerContinent
+                } else {
+                    self.model.filteredConferences = self.model.conferencesPerContinent
+                }
                 break
         }
     }

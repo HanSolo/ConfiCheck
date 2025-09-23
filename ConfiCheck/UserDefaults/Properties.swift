@@ -25,6 +25,7 @@ extension Key {
     static let selectedContinent      : Key = "selectedContinent"
     static let isJavaChampion         : Key = "isJavaChampion"
     static let lastPullRequestCreated : Key = "lastPullRequestCreated"
+    static let showUpcomingOnly       : Key = "showUpcomingOnly"
 }
 
 
@@ -72,6 +73,9 @@ public struct Properties {
     
     @UserDefault(key: .lastPullRequestCreated, defaultValue: Date.now.timeIntervalSince1970)
     var lastPullRequestCreated: Double?
+    
+    @UserDefault(key: .showUpcomingOnly, defaultValue: false)
+    var showUpcomingOnly: Bool?
     
     private init() {}
 }

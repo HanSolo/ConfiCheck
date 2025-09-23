@@ -11,10 +11,21 @@ import SwiftUI
 
 @MainActor
 public class ConfiModel: ObservableObject {
-    @Published var networkMonitor          : NetworkMonitor           = NetworkMonitor()
-    @Published var conferences             : [ConferenceItem]         = []
-    @Published var conferencesPerMonth     : [Int : [ConferenceItem]] = [:]
-    @Published var conferencesPerContinent : [Int : [ConferenceItem]] = [:] {
+    @Published var networkMonitor                  : NetworkMonitor           = NetworkMonitor()
+    @Published var conferences                     : [ConferenceItem]         = [] {
+        didSet {
+            self.upcomingConferences.removeAll()
+            for conference in self.conferences {
+                if Helper.isUpcoming(conference: conference) {
+                    self.upcomingConferences.append(conference)
+                }
+            }
+        }
+    }
+    @Published var upcomingConferences             : [ConferenceItem]         = []
+    @Published var conferencesPerMonth             : [Int : [ConferenceItem]] = [:]
+    @Published var upcomingConferencesPerMonth     : [Int : [ConferenceItem]] = [:]
+    @Published var conferencesPerContinent         : [Int : [ConferenceItem]] = [:] {
         didSet {
             self.conferencesWithOpenCfp.removeAll()
             var tmp : [Int : [ConferenceItem]] = [:]
@@ -30,31 +41,66 @@ public class ConfiModel: ObservableObject {
             }
         }
     }
-    @Published var filteredConferences     : [Int : [ConferenceItem]] = [:]
-    @Published var conferencesWithOpenCfp  : [ConferenceItem]         = []
-    @Published var proposals               : [ProposalItem]           = []
-    @Published var attendence              : [String : Int]           = Properties.instance.attendence ?? [:] {
+    @Published var upcomingConferencesPerContinent : [Int : [ConferenceItem]] = [:] {
+        didSet {
+            self.conferencesWithOpenCfp.removeAll()
+            var tmp : [Int : [ConferenceItem]] = [:]
+            for month in self.upcomingConferencesPerContinent.keys {
+                if self.upcomingConferencesPerContinent[month]?.isEmpty ?? true { continue }
+                tmp[month] = self.upcomingConferencesPerContinent[month]?.filter({ $0.cfpDate != nil })
+                                                                 .filter({ Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0 != nil })
+                                                                 .filter({ Helper.isCfpOpen(date: Helper.getDatesFromJavaConferenceDate(date: $0.cfpDate!).0!) })
+            }
+            for month in tmp.keys {
+                if tmp[month]?.isEmpty ?? true { continue }
+                self.conferencesWithOpenCfp.append(contentsOf: tmp[month]!)
+            }
+        }
+    }
+    @Published var filteredConferences             : [Int : [ConferenceItem]] = [:]
+    @Published var conferencesWithOpenCfp          : [ConferenceItem]         = []
+    @Published var proposals                       : [ProposalItem]           = []
+    @Published var attendence                      : [String : Int]           = Properties.instance.attendence ?? [:] {
         didSet {
             Properties.instance.attendence = self.attendence            
         }
     }
-    @Published var selectedConference      : ConferenceItem?          = nil
-    @Published var selectedProposal        : ProposalItem?            = nil
-    @State     var update                  : Bool                     = false {
+    @Published var selectedConference              : ConferenceItem?          = nil
+    @Published var selectedProposal                : ProposalItem?            = nil
+    @Published var showUpcomingOnly                : Bool                     = Properties.instance.showUpcomingOnly! {
+        didSet {
+            Properties.instance.showUpcomingOnly = self.showUpcomingOnly
+            update.toggle()
+        }
+    }
+    @Published var triggerReset                    : Bool                     = false
+    @State     var update                          : Bool                     = false {
         didSet {
             self.conferencesPerMonth.removeAll()
             self.conferencesPerContinent.removeAll()
             self.filteredConferences.removeAll()
-            for conference in self.conferences {                
+            for conference in self.conferences {
                 let month : Int = calendar.component(.month, from: conference.date)
                 if !self.conferencesPerMonth.keys.contains(month) {
-                    self.conferencesPerMonth[month]     = []
-                    self.conferencesPerContinent[month] = []
-                    self.filteredConferences[month]     = []
+                    self.conferencesPerMonth[month]             = []
+                    self.conferencesPerContinent[month]         = []
+                    self.filteredConferences[month]             = []
                 }
                 self.conferencesPerMonth[month]!.append(conference)
                 self.conferencesPerContinent[month]!.append(conference)
                 self.filteredConferences[month]!.append(conference)
+            }
+            
+            self.upcomingConferencesPerMonth.removeAll()
+            self.upcomingConferencesPerContinent.removeAll()
+            for conference in self.upcomingConferences {
+                let month : Int = calendar.component(.month, from: conference.date)
+                if !self.upcomingConferencesPerMonth.keys.contains(month) {
+                    self.upcomingConferencesPerMonth[month]     = []
+                    self.upcomingConferencesPerContinent[month] = []
+                }
+                self.upcomingConferencesPerMonth[month]!.append(conference)
+                self.upcomingConferencesPerContinent[month]!.append(conference)
             }
         }
     }

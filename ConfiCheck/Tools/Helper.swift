@@ -376,6 +376,10 @@ public struct Helper {
         return image
     }
     
+    static func isUpcoming(conference: ConferenceItem) -> Bool {
+        return conference.date.addingTimeInterval(conference.days * Constants.SECONDS_PER_DAY) >= Date.now
+    }
+    
     static func conferencesToJson(conferences: [ConferenceItem]) -> String {
         var jsonTxt : String = "["
         for conference in conferences {                        

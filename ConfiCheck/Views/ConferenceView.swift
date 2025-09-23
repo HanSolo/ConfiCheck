@@ -42,8 +42,8 @@ struct ConferenceView: View, Identifiable {
                 // Conference Name
                 Text("\(conference.name) \(conference.date.getYear(), format: .number.grouping(.never))")
                     .font(.system(size: 16, weight: .medium, design: .rounded))
-                    .foregroundStyle(self.isOver() ? .secondary : .primary)
-                    .strikethrough(self.isOver())
+                    .foregroundStyle(self.isInThePast() ? .secondary : .primary)
+                    .strikethrough(self.isInThePast())
                 
                 Spacer()
                 
@@ -285,7 +285,7 @@ struct ConferenceView: View, Identifiable {
         self.conference.removeProposal(proposal: self.conference.proposals![offsets.first!])
     }
     
-    private func isOver() -> Bool {
+    private func isInThePast() -> Bool {
         return self.conference.date.addingTimeInterval(self.conference.days * Constants.SECONDS_PER_DAY) < Date.now
     }
     
